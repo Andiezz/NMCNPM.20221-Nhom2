@@ -1,0 +1,19 @@
+{
+  "name": "nmcnpm.20221-nhom2",
+  "version": "1.0.0",
+  "description": "SoftwareEng-Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andiezz/NMCNPM.20221-Nhom2.git"
+  },
+  "author": "Andiezz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Andiezz/NMCNPM.20221-Nhom2/issues"
+  },
+  "homepage": "https://github.com/Andiezz/NMCNPM.20221-Nhom2#readme"
+}

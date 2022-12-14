@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Andiezz/NMCNPM.20221-Nhom2/issues"
   },
-  "homepage": "https://github.com/Andiezz/NMCNPM.20221-Nhom2#readme"
+  "homepage": "https://github.com/Andiezz/NMCNPM.20221-Nhom2#readme",
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
 }

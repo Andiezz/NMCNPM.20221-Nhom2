@@ -15,7 +15,8 @@ const userSchema = new Schema(
             default: 1,
         },
         citizen_id: {
-            type: Number,
+            type: Schema.Types.ObjectId,
+            ref: "Citizen",
             required: true,
         },
         phone: {

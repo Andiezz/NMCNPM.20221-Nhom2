@@ -28,7 +28,7 @@ const userSchema = new Schema(
             required: true,
             min: 8,
         },
-        refreshToken: String,
+        refresh_token: String,
         resetToken: String,
         resetTokenExpiration: String,
     },

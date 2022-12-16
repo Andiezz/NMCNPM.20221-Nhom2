@@ -33,7 +33,7 @@ exports.login = async (req, res, next) => {
     const refresh_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: 60 * 60 * 24 * 90
     })
-    user.refreshToken = refresh_token
+    user.refresh_token = refresh_token
     await user.save()
     req.session = { access_token }
     req.user = user

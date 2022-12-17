@@ -1,11 +1,11 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const citizenSchema = new Schema({
     card_id: {
         type: String,
-        required: true
+        required: true,
     },
     // household_id: {
     //     type: String,
@@ -13,59 +13,59 @@ const citizenSchema = new Schema({
     // },
     passport_id: {
         type: String,
-        required: true
+        required: true,
     },
     name: {
         firstName: {
             type: String,
-            required: true
+            required: true,
         },
         lastName: {
             type: String,
-            required: true
-        }
+            required: true,
+        },
     },
     gender: {
         type: String,
         enum: ["male", "female", "other"],
-        require: true
+        require: true,
     },
     dob: {
         type: Date,
-        required: true
+        required: true,
     },
     birthPlace: {
         type: String,
-        required: true
+        required: true,
     },
     hometown: {
         type: String,
-        required: true
+        required: true,
     },
     residence: {
         type: String,
-        required: true
+        required: true,
     },
     religion: {
         type: String,
-        required: true
+        required: true,
     },
     ethic: {
         type: String,
-        required: true
+        required: true,
     },
     profession: {
         type: String,
-        required: true
+        required: true,
     },
     workplace: {
         type: String,
-        required: true
+        required: true,
     },
     education: {
         type: Number,
-        required: true
-    }
-})
+        required: true,
+    },
+});
 
-module.exports = mongoose.model("Citizen", citizenSchema)
+module.exports = mongoose.model("Citizen", citizenSchema);

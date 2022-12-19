@@ -7,10 +7,9 @@ const citizenSchema = new Schema({
         type: String,
         required: true,
     },
-    // household_id: {
-    //     type: String,
-    //     required: true
-    // },
+    household_id: {
+        type: String,
+    },
     passport_id: {
         type: String,
         required: true,

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config()
 
 const User = require("../models/user");
 
@@ -9,7 +10,7 @@ exports.authToken = (req, res, next) => {
         throw err;
     }
 
-    jwt.verify(req.session.access_token, "Grace's secret", (err, user) => {
+    jwt.verify(req.session.access_token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             const err = new Error("Timeout please login again.");
             err.statusCode = 403;

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const config = require("config")
 require("dotenv").config();
 
 const User = require("../models/user");
@@ -33,10 +34,10 @@ exports.login = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = jwt.sign(user, "Grace's secret", {
-        expiresIn: "1h",
+    const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: config.get("default.access_token_exp"),
     });
-    const refresh_token = jwt.sign(user, "Grace's secret", {
+    const refresh_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: 60 * 60 * 24 * 90,
     });
     check_user.refresh_token = refresh_token;
@@ -78,8 +79,8 @@ exports.generateToken = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = jwt.sign(user, "Grace's secret", {
-        expiresIn: "1h",
+    const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: config.get("default.access_token_exp"),
     });
     req.session = { access_token };
 
@@ -102,6 +103,5 @@ exports.logout = async (req, res, next) => {
     res.status(200).json({
         response_status: 1,
         message: "Logout successfully!",
-        data: null,
     });
 };

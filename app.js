@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
+require("dotenv").config();
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", true);
@@ -34,9 +35,7 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 
 mongoose
-    .connect(
-        "mongodb+srv://Andiez:auuRRqVMFluTVhYW@cluster0.fkvtz7z.mongodb.net/test"
-    )
+    .connect(process.env.MONGO_DATABASE)
     .then(app.listen(3000))
     .catch((err) => {
         console.log(err);

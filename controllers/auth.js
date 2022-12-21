@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const config = require("config")
 require("dotenv").config();
+const { signToken } = require("../utils/security")
 
 const User = require("../models/user");
 
@@ -34,10 +34,10 @@ exports.login = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    const access_token = signToken(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: config.get("default.access_token_exp"),
     });
-    const refresh_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
+    const refresh_token = signToken(user, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: 60 * 60 * 24 * 90,
     });
     check_user.refresh_token = refresh_token;
@@ -63,7 +63,7 @@ exports.generateToken = async (req, res, next) => {
         throw err;
     }
 
-    let check_user = await User.findOne({ refresh_token: refresh_token });
+    const check_user = await User.findOne({ refresh_token: refresh_token });
     if (!check_user) {
         req.session = null;
         req.user = null;
@@ -79,7 +79,7 @@ exports.generateToken = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    const access_token = signToken(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: config.get("default.access_token_exp"),
     });
     req.session = { access_token };

@@ -9,6 +9,10 @@ router.post("/login", authController.login);
 
 router.post("/token", authController.generateToken);
 
+router.post("/reset", authController.reset)
+
+router.patch("/reset_password", authController.resetPassword)
+
 router.post("/logout", authToken, authController.logout);
 
 module.exports = router;

@@ -1,8 +1,13 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const config = require("config")
+const config = require("config");
 require("dotenv").config();
-const { signToken } = require("../utils/security")
+const security = require("../utils/security");
+
+const client = require("twilio")(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+);
 
 const User = require("../models/user");
 
@@ -34,12 +39,20 @@ exports.login = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = signToken(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: config.get("default.access_token_exp"),
-    });
-    const refresh_token = signToken(user, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: 60 * 60 * 24 * 90,
-    });
+    const access_token = security.signToken(
+        user,
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: config.get("default.access_token_exp"),
+        }
+    );
+    const refresh_token = security.signToken(
+        user,
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: 60 * 60 * 24 * 90,
+        }
+    );
     check_user.refresh_token = refresh_token;
     await check_user.save();
     req.session = { access_token };
@@ -79,9 +92,13 @@ exports.generateToken = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = signToken(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: config.get("default.access_token_exp"),
-    });
+    const access_token = security.signToken(
+        user,
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: config.get("default.access_token_exp"),
+        }
+    );
     req.session = { access_token };
 
     return res.status(200).json({
@@ -91,6 +108,80 @@ exports.generateToken = async (req, res, next) => {
             access_token,
         },
     });
+};
+
+exports.reset = async (req, res, next) => {
+    crypto.randomBytes(6, async (error, buffer) => {
+        const { phone, role } = req.body;
+        if (error) {
+            error.statusCode = 400;
+            throw error;
+        }
+        const token = buffer.toString("hex");
+        const user = await User.findOne({ phone: phone, role: role });
+        if (!user) {
+            const err = new Error("Your phone or role is incorrect.");
+            err.statusCode = 401;
+            throw err;
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        user.save();
+
+        client.messages
+            .create({
+                to: "+84584702251", //? for test, replace with:
+                // to: "+84" + user.phone.slice(1)
+                body: `Your reset password code is ${token}`,
+                from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
+            })
+            .then((message) => {
+                console.log(message.sid);
+            })
+            .done();
+
+        res.status(200).json({
+            response_status: 1,
+            message: "Reset token saved!",
+        });
+    });
+};
+
+exports.resetPassword = async (req, res, next) => {
+    const { token, newPassword } = req.body;
+
+    const user = await User.findOne({
+        resetToken: token,
+        resetTokenExpiration: { $gt: Date.now() },
+    });
+    if (!user) {
+        const error = new Error("Your reset token is expired or invalid.");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const hashedPassword = await security.hashPassword(newPassword)
+    user.password = hashedPassword
+    user.resetToken = undefined
+    user.resetTokenExpiration = undefined
+    user.save()
+
+    client.messages
+            .create({
+                to: "+84584702251", //? for test, replace with:
+                // to: "+84" + user.phone.slice(1)
+                body: `Password updated successfully!`,
+                from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
+            })
+            .then((message) => {
+                console.log(message.sid);
+            })
+            .done();
+
+    res.status(200).json({
+        response_status: 1,
+        message: "New password updated!"
+    })
 };
 
 exports.logout = async (req, res, next) => {

@@ -26,7 +26,7 @@ const citizenSchema = new Schema({
     },
     gender: {
         type: String,
-        enum: ["male", "female", "other"],
+        enum: ["MALE", "FEMALE", "OTHER"],
         require: true,
     },
     dob: {

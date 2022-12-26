@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
-const hashPassword = require("../utils/security")
+const security = require("../utils/security")
 
 const client = require("twilio")(
     process.env.TWILIO_ACCOUNT_SID,
@@ -85,7 +85,7 @@ exports.register = async (req, res, next) => {
         throw err;
     }
 
-    const hashedPassword = await hashPassword(password)
+    const hashedPassword = await security.hashPassword(password)
 
     const user = new User({
         citizen_id: newCitizen._id,
@@ -240,7 +240,7 @@ exports.updatePassword = async (req, res, next) => {
         err.statusCode = 401;
         throw err;
     }
-    const hashedPassword = await hashPassword(password)
+    const hashedPassword = await security.hashPassword(newPassword)
     check_user.password = hashedPassword;
     await check_user.save();
 

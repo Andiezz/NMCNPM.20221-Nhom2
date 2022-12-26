@@ -13,7 +13,7 @@ exports.adminInit = async () => {
         );
         await User.deleteMany({ role: "admin" });
         let admin = await User.create({
-            role: "admin",
+            role: "ADMIN",
             citizen_id: mongoose.Types.ObjectId("123456789101112131415161"),
             phone: "0912345678",
             password: hashedDefaultPassword,

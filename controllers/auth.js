@@ -39,19 +39,15 @@ exports.login = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = security.signToken(
+    const access_token = await security.signToken(
         user,
         process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn: config.get("default.access_token_exp"),
-        }
+        config.get("default.access_token_exp")
     );
-    const refresh_token = security.signToken(
+    const refresh_token = await security.signToken(
         user,
         process.env.REFRESH_TOKEN_SECRET,
-        {
-            expiresIn: 60 * 60 * 24 * 90,
-        }
+        60 * 60 * 24 * 90
     );
     check_user.refresh_token = refresh_token;
     await check_user.save();
@@ -92,12 +88,10 @@ exports.generateToken = async (req, res, next) => {
         citizen_id: check_user.citizen_id,
         phone: check_user.phone,
     };
-    const access_token = security.signToken(
+    const access_token = await security.signToken(
         user,
         process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn: config.get("default.access_token_exp"),
-        }
+        config.get("default.access_token_exp")
     );
     req.session = { access_token };
 
@@ -110,15 +104,15 @@ exports.generateToken = async (req, res, next) => {
     });
 };
 
-exports.reset = async (req, res, next) => {
-    crypto.randomBytes(6, async (error, buffer) => {
-        const { phone, role } = req.body;
+exports.genResetToken = async (req, res, next) => {
+    crypto.randomBytes(3, async (error, buffer) => {
+        const { phone } = req.body;
         if (error) {
             error.statusCode = 400;
             throw error;
         }
         const token = buffer.toString("hex");
-        const user = await User.findOne({ phone: phone, role: role });
+        const user = await User.findOne({ phone: phone });
         if (!user) {
             const err = new Error("Your phone or role is incorrect.");
             err.statusCode = 401;
@@ -132,11 +126,12 @@ exports.reset = async (req, res, next) => {
             .create({
                 to: "+84584702251", //? for test, replace with:
                 // to: "+84" + user.phone.slice(1)
+                messagingServiceSid: 'MGbcf508135477891aba4f642cbe199f6e',
                 body: `Your reset password code is ${token}`,
                 from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
             })
             .then((message) => {
-                console.log(message.sid);
+                // console.log(message.sid);
             })
             .done();
 
@@ -160,28 +155,28 @@ exports.resetPassword = async (req, res, next) => {
         throw error;
     }
 
-    const hashedPassword = await security.hashPassword(newPassword)
-    user.password = hashedPassword
-    user.resetToken = undefined
-    user.resetTokenExpiration = undefined
-    user.save()
+    const hashedPassword = await security.hashPassword(newPassword);
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    user.save();
 
     client.messages
-            .create({
-                to: "+84584702251", //? for test, replace with:
-                // to: "+84" + user.phone.slice(1)
-                body: `Password updated successfully!`,
-                from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
-            })
-            .then((message) => {
-                console.log(message.sid);
-            })
-            .done();
+        .create({
+            to: "+84584702251", //? for test, replace with:
+            // to: "+84" + user.phone.slice(1)
+            body: `Password updated successfully!`,
+            from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
+        })
+        .then((message) => {
+            console.log(message.sid);
+        })
+        .done();
 
     res.status(200).json({
         response_status: 1,
-        message: "New password updated!"
-    })
+        message: "New password updated!",
+    });
 };
 
 exports.logout = async (req, res, next) => {

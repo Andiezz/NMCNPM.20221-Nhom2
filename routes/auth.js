@@ -7,11 +7,11 @@ const router = express.Router();
 
 router.post("/login", authController.login);
 
-router.post("/token", authController.generateToken);
+router.post("/genToken", authController.generateToken);
 
-router.post("/reset", authController.reset)
+router.post("/genResetToken", authController.genResetToken)
 
-router.patch("/reset_password", authController.resetPassword)
+router.patch("/resetPassword", authController.resetPassword)
 
 router.post("/logout", authToken, authController.logout);
 

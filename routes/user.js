@@ -12,9 +12,9 @@ router.get("/profile/:userId", isAuth.authToken, userController.profile)
 
 router.patch("/profile/:userId", isAuth.authToken, userController.updateProfile)
 
-router.patch("/update_password/:userId", isAuth.authToken, userController.updatePassword)
+router.patch("/updatePassword/:userId", isAuth.authToken, userController.updatePassword)
 
-router.get("/user_list", isAuth.authToken, isAuth.authRole(["admin"]), userController.userList)
+router.get("/userList", isAuth.authToken, isAuth.authRole(["admin"]), userController.userList)
 
 router.delete("/delete/:userId", isAuth.authToken, isAuth.authRole(["admin"]), userController.deleteAccount)
 

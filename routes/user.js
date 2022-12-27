@@ -14,8 +14,8 @@ router.patch("/profile/:userId", isAuth.authToken, userController.updateProfile)
 
 router.patch("/updatePassword/:userId", isAuth.authToken, userController.updatePassword)
 
-router.get("/userList", isAuth.authToken, isAuth.authRole(["admin"]), userController.userList)
+router.get("/userList", isAuth.authToken, isAuth.authRole(["ADMIN"]), userController.userList)
 
-router.delete("/delete/:userId", isAuth.authToken, isAuth.authRole(["admin"]), userController.deleteAccount)
+router.delete("/delete/:userId", isAuth.authToken, isAuth.authRole(["ADMIN"]), userController.deleteAccount)
 
 module.exports = router;

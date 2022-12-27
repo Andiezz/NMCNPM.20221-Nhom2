@@ -1,9 +1,9 @@
-const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
-const config = require("config");
-const security = require("../utils/security");
+const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+const config = require('config');
+const security = require('../utils/security');
 
-const User = require("../models/user");
+const User = require('../models/user');
 
 exports.adminInit = async () => {
     try {
@@ -25,10 +25,10 @@ exports.adminInit = async () => {
             dob: "01/01/3000",
         });
 
-        if (admin) console.log("Init admin successfully!!!");
+    if (admin) console.log('Init admin successfully!!!');
 
-        mongoose.connection.close();
-    } catch (error) {
-        console.log(error);
-    }
+    mongoose.connection.close();
+  } catch (error) {
+    console.log(error);
+  }
 };

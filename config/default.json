@@ -1,15 +1,15 @@
 {
-    "role": {
-        "admin": "admin",
-        "leader": "leader",
-        "accountant": "accountant"
-    },
-    "default": {
-        "access_token_exp": 3600,
-        "password": "123456789"
-    },
-    "account_status": {
-        "active": 1,
-        "inactive": 0
-    }
+  "role": {
+    "admin": "ADMIN",
+    "leader": "LEADER",
+    "accountant": "ACCOUNTANT"
+  },
+  "default": {
+    "access_token_exp": 3600,
+    "password": "123456789"
+  },
+  "account_status": {
+    "active": 1,
+    "inactive": 0
+  }
 }

@@ -6,9 +6,13 @@ const hashPassword = async (password) => {
   const salt = bcrypt.genSaltSync();
   const hashedPassword = await bcrypt.hash(password, salt);
   return hashedPassword;
+exports.hashPassword = async (password) => {
+  const salt = bcrypt.genSaltSync();
+  const hashedPassword = await bcrypt.hash(password, salt);
+  return hashedPassword;
 };
 
-const signToken = async (user, secret, exp) => {
+exports.signToken = async (user, secret, exp) => {
   return jwt.sign(user, secret, {
     expiresIn: exp,
   });

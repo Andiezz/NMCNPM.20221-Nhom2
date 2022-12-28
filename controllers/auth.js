@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const config = require('config');
 require('dotenv').config();
+
+const User = require('../models/user');
+const authService = require('../services/auth');
+const userService = require('../services/user');
 const security = require('../utils/security');
 
 const client = require('twilio')(
@@ -9,16 +13,9 @@ const client = require('twilio')(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-const User = require('../models/user');
-
 exports.login = async (req, res, next) => {
   const { phone, password, role } = req.body;
-
-  const check_user = await User.findOne({
-    phone: phone,
-    role: role,
-  });
-
+  const check_user = await userService.getUserByPhoneRole({ phone, role });
   if (!check_user) {
     const err = new Error('Your phone or role is incorrect.');
     err.statusCode = 404;
@@ -32,25 +29,13 @@ exports.login = async (req, res, next) => {
     throw err;
   }
 
-  const user = {
-    _id: check_user._id,
+  const { access_token, refresh_token, user } = await authService.signJWT({
+    id: check_user._id,
     role: check_user.role,
     status: check_user.status,
     citizen_id: check_user.citizen_id,
     phone: check_user.phone,
-  };
-  const access_token = await security.signToken(
-    user,
-    process.env.ACCESS_TOKEN_SECRET,
-    config.get('default.access_token_exp')
-  );
-  const refresh_token = await security.signToken(
-    user,
-    process.env.REFRESH_TOKEN_SECRET,
-    60 * 60 * 24 * 90
-  );
-  check_user.refresh_token = refresh_token;
-  await check_user.save();
+  });
   req.session = { access_token };
   req.user = user;
 
@@ -65,43 +50,28 @@ exports.login = async (req, res, next) => {
 
 exports.generateToken = async (req, res, next) => {
   const { refresh_token } = req.body;
-
   if (!refresh_token) {
     const err = new Error('Not authenticated.');
     err.statusCode = 401;
     throw err;
   }
-
-  const check_user = await User.findOne({ refresh_token: refresh_token });
-  if (!check_user) {
+  const access_token = await authService.getAccessToken(refresh_token);
+  if (access_token) {
+    req.session = { access_token };
+    return res.status(200).json({
+      response_status: 1,
+      message: 'Refresh token successfully!',
+      data: {
+        access_token,
+      },
+    });
+  } else {
     req.session = null;
     req.user = null;
-    const err = new Error('Refresh token not found.');
-    err.statusCode = 404;
+    const err = new Error('Invalid refresh token..');
+    err.statusCode = 401;
     throw err;
   }
-
-  const user = {
-    _id: check_user._id,
-    role: check_user.role,
-    status: check_user.status,
-    citizen_id: check_user.citizen_id,
-    phone: check_user.phone,
-  };
-  const access_token = await security.signToken(
-    user,
-    process.env.ACCESS_TOKEN_SECRET,
-    config.get('default.access_token_exp')
-  );
-  req.session = { access_token };
-
-  return res.status(200).json({
-    response_status: 1,
-    message: 'Refresh token successfully!',
-    data: {
-      access_token,
-    },
-  });
 };
 
 exports.genResetToken = async (req, res, next) => {
@@ -111,16 +81,7 @@ exports.genResetToken = async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     }
-    const token = buffer.toString('hex');
-    const user = await User.findOne({ phone: phone });
-    if (!user) {
-      const err = new Error('Your phone or role is incorrect.');
-      err.statusCode = 401;
-      throw err;
-    }
-    user.resetToken = token;
-    user.resetTokenExpiration = Date.now() + 3600000;
-    user.save();
+    await authService.genResetToken(buffer, phone);
 
     client.messages
       .create({
@@ -144,21 +105,7 @@ exports.genResetToken = async (req, res, next) => {
 
 exports.resetPassword = async (req, res, next) => {
   const { token, newPassword } = req.body;
-  const user = await User.findOne({
-    resetToken: token,
-    resetTokenExpiration: { $gt: Date.now() },
-  });
-  if (!user) {
-    const error = new Error('Your reset token is expired or invalid.');
-    error.statusCode = 401;
-    throw error;
-  }
-
-  const hashedPassword = await security.hashPassword(newPassword);
-  user.password = hashedPassword;
-  user.resetToken = undefined;
-  user.resetTokenExpiration = undefined;
-  user.save();
+  await authService.resetPassword();
 
   client.messages
     .create({
@@ -179,12 +126,9 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  const check_user = await User.findById(req.user._id);
-  check_user.refresh_token = undefined;
-  check_user.save();
+  await authService.logout(req.user._id)
   req.user = null;
   req.session = null;
-
   res.status(200).json({
     response_status: 1,
     message: 'Logout successfully!',

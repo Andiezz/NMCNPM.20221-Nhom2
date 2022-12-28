@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const security = require("../utils/security")
+const security = require('../utils/security');
 
 const client = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
@@ -85,7 +85,7 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-    const hashedPassword = await security.hashPassword(password)
+  const hashedPassword = await security.hashPassword(password);
 
   const user = new User({
     citizen_id: newCitizen._id,
@@ -226,23 +226,23 @@ exports.updateProfile = async (req, res, next) => {
 };
 
 exports.updatePassword = async (req, res, next) => {
-    const { oldPassword, newPassword } = req.body;
-    const userId = req.params.userId;
-    const check_user = await User.findById(userId);
-    if (!check_user) {
-        const err = new Error("User not found.");
-        err.statusCode = 404;
-        throw err;
-    }
-    const isEqual = await bcrypt.compare(oldPassword, check_user.password);
-    if (!isEqual) {
-        const err = new Error("Old password is incorrect.");
-        err.statusCode = 401;
-        throw err;
-    }
-    const hashedPassword = await security.hashPassword(newPassword)
-    check_user.password = hashedPassword;
-    await check_user.save();
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.params.userId;
+  const check_user = await User.findById(userId);
+  if (!check_user) {
+    const err = new Error('User not found.');
+    err.statusCode = 404;
+    throw err;
+  }
+  const isEqual = await bcrypt.compare(oldPassword, check_user.password);
+  if (!isEqual) {
+    const err = new Error('Old password is incorrect.');
+    err.statusCode = 401;
+    throw err;
+  }
+  const hashedPassword = await security.hashPassword(newPassword);
+  check_user.password = hashedPassword;
+  await check_user.save();
 
   client.messages
     .create({
@@ -275,9 +275,12 @@ exports.userList = async (req, res, next) => {
 
 exports.deleteAccount = async (req, res, next) => {
   const userId = req.params.userId;
+  const user = User.findOne({ _id: userId });
+  const citizen_id = user.citizen_id;
   await User.deleteOne({ _id: userId });
+  await Citizen.deleteOne({ _id: citizen_id });
   res.status(200).json({
     responseStatus: 1,
-    message: 'User deleted!',
+    message: 'User and citizen attached to are deleted!',
   });
 };

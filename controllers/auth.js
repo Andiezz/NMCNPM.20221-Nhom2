@@ -81,7 +81,8 @@ exports.genResetToken = async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     }
-    await authService.genResetToken(buffer, phone);
+    const user = await userService.getUserByPhone({ phone });
+    await authService.genResetToken(buffer, user);
 
     client.messages
       .create({
@@ -126,7 +127,7 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.logout = async (req, res, next) => {
-  await authService.logout(req.user._id)
+  await authService.logout(req.user._id);
   req.user = null;
   req.session = null;
   res.status(200).json({

@@ -2,7 +2,6 @@ const config = require('config');
 require('dotenv').config();
 
 const User = require('../models/user');
-const userService = require('../services/user');
 const security = require('../utils/security');
 
 const client = require('twilio')(
@@ -39,9 +38,9 @@ exports.signJWT = async ({ id, role, status, citizen_id, phone }) => {
 exports.getAccessToken = async (refresh_token) => {
   const checkRT = User.exists({ refresh_token: refresh_token });
   if (checkRT) {
-    const user_info = await User.findById(checkRT._id);
+    const user_info = await User.findOne({ refresh_token: refresh_token });
     const user = {
-      _id: user_info.id,
+      _id: user_info._id,
       role: user_info.role,
       status: user_info.status,
       citizen_id: user_info.citizen_id,
@@ -59,9 +58,8 @@ exports.getAccessToken = async (refresh_token) => {
   }
 };
 
-exports.genResetToken = async (buffer, phone) => {
+exports.genResetToken = async (buffer, user) => {
   const token = buffer.toString('hex');
-  const user = userService.getUserByPhone(phone);
   if (!user) {
     const err = new Error('Your phone is incorrect.');
     err.statusCode = 401;
@@ -88,10 +86,10 @@ exports.resetPassword = async (token, newPassword) => {
   user.resetToken = undefined;
   user.resetTokenExpiration = undefined;
   user.save();
-}
+};
 
 exports.logout = async (id) => {
   const user = User.findById(id);
   user.refresh_token = undefined;
   user.save();
-}
+};

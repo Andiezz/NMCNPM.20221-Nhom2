@@ -6,7 +6,7 @@ const user = require("../models/user");
 
 const router = express.Router();
 
-router.post("/register", isAuth.authToken, userController.register);
+router.post("/register", isAuth.authToken, isAuth.authRole(["ADMIN"]), userController.register);
 
 router.get("/profile/:userId", isAuth.authToken, userController.profile)
 

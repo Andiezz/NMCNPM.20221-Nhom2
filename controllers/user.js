@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
+const userService = require('../services/user');
+const citizenService = require('../services/citizen');
 const security = require('../utils/security');
 
 const client = require('twilio')(
@@ -37,10 +39,7 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-  const check_user = await User.findOne({
-    phone: phone,
-    role: role,
-  });
+  const check_user = await userService.getUserByPhoneRole({ phone, role });
 
   if (check_user) {
     const err = new Error('This account has already existed!');
@@ -48,9 +47,9 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-  const check_citizen = await Citizen.findOne({
-    card_id: card_id,
-    passport_id: passport_id,
+  const check_citizen = await citizenService.getCitizenById({
+    card_id,
+    passport_id,
   });
 
   if (check_citizen) {
@@ -59,7 +58,7 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-  const citizen = new Citizen({
+  const newCitizen = citizenService.createNewCitizen({
     card_id: card_id,
     passport_id: passport_id,
     name: {
@@ -78,28 +77,12 @@ exports.register = async (req, res, next) => {
     education: education,
   });
 
-  const newCitizen = await citizen.save();
-  if (newCitizen !== citizen) {
-    const err = new Error('Failed to connect with database.');
-    err.statusCode = 500;
-    throw err;
-  }
-
-  const hashedPassword = await security.hashPassword(password);
-
-  const user = new User({
-    citizen_id: newCitizen._id,
+  const newUser = userService.createNewUser({
     role: role,
     phone: phone,
-    password: hashedPassword,
+    password: password,
+    citizen_id: newCitizen._id,
   });
-
-  const newUser = await user.save();
-  if (newUser !== user) {
-    const err = new Error('Failed to connect with database.');
-    err.statusCode = 500;
-    throw err;
-  }
 
   client.messages
     .create({
@@ -125,7 +108,7 @@ exports.register = async (req, res, next) => {
 
 exports.profile = async (req, res, next) => {
   const userId = req.params.userId;
-  const check_user = await User.findById(userId);
+  const check_user = await userService.getUserById({ userId });
   if (!check_user) {
     const error = new Error('User not found');
     error.statusCode = 404;
@@ -156,71 +139,31 @@ exports.updateProfile = async (req, res, next) => {
     education,
   } = req.body;
   const userId = req.params.userId;
-  const check_user = await User.findById(userId);
 
-  if (!check_user) {
-    const err = new Error('User not found.');
-    err.statusCode = 404;
-    throw err;
-  }
-
-  //? can replace with validator
-  const check_citizen = await Citizen.findById(check_user.citizen_id);
-  const check_cardId = Citizen.findOne({
-    card_id: card_id,
-  });
-  const check_passportId = Citizen.findOne({
-    passport_id: passport_id,
-  });
-
-  if (check_cardId && check_cardId.citizen_id != check_citizen.citizen_id) {
-    const err = new Error('This card identity has already been used.');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  if (
-    check_passportId &&
-    check_passportId.citizen_id != check_citizen.citizen_id
-  ) {
-    const err = new Error('This passport identity has already been used.');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  const check_phone = await User.findOne({
+  const updatedUser = userService.updateUserProfile({
+    userId: userId,
     phone: phone,
-    role: check_user.role,
-  });
-
-  if (check_phone && phone != check_phone.phone) {
-    const err = new Error('This phone has already been used.');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  check_user.phone = phone;
-  check_user.card_id = card_id;
-  check_user.passport_id = passport_id;
-  check_user.firstName = firstName;
-  check_user.lastName = lastName;
-  check_user.gender = gender;
-  check_user.dob = dob;
-  check_user.birthPlace = birthPlace;
-  check_user.hometown = hometown;
-  check_user.residence = residence;
-  check_user.religion = religion;
-  check_user.ethic = ethic;
-  check_user.profession = profession;
-  check_user.workplace = workplace;
-  check_user.education = education;
-
-  await check_user.save();
+    card_id: card_id,
+    passport_id: passport_id,
+    firstName: firstName,
+    lastName: lastName,
+    gender: gender,
+    dob: dob,
+    birthPlace: birthPlace,
+    hometown: hometown,
+    residence: residence,
+    religion: religion,
+    ethic: ethic,
+    profession: profession,
+    workplace: workplace,
+    education: education,
+  })
+  
   res.status(200).json({
     responseStatus: 1,
     message: 'User updated!',
     data: {
-      user: check_user,
+      user: updatedUser,
     },
   });
 };
@@ -228,27 +171,19 @@ exports.updateProfile = async (req, res, next) => {
 exports.updatePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
   const userId = req.params.userId;
-  const check_user = await User.findById(userId);
-  if (!check_user) {
-    const err = new Error('User not found.');
-    err.statusCode = 404;
-    throw err;
-  }
-  const isEqual = await bcrypt.compare(oldPassword, check_user.password);
-  if (!isEqual) {
-    const err = new Error('Old password is incorrect.');
-    err.statusCode = 401;
-    throw err;
-  }
-  const hashedPassword = await security.hashPassword(newPassword);
-  check_user.password = hashedPassword;
-  await check_user.save();
+  
+  const updatedUser = userService.updateUserPassword({
+    userId: userId,
+    oldPassword: oldPassword,
+    newPassword: newPassword
+  })
 
   client.messages
     .create({
       to: '+84584702251', //? for test, replace with:
       // to: "+84" + newUser.phone.slice(1)
-      body: 'Password updated successfully!',
+      body: `User: ${updatedUser.name}.\n
+            Password updated successfully!`,
       from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
     })
     .then((message) => {
@@ -263,7 +198,7 @@ exports.updatePassword = async (req, res, next) => {
 };
 
 exports.userList = async (req, res, next) => {
-  const list = await User.find();
+  const list = userService.getAllUsers;
   res.status(200).json({
     responseStatus: 1,
     message: 'All users fetched!',
@@ -275,10 +210,8 @@ exports.userList = async (req, res, next) => {
 
 exports.deleteAccount = async (req, res, next) => {
   const userId = req.params.userId;
-  const user = User.findOne({ _id: userId });
-  const citizen_id = user.citizen_id;
-  await User.deleteOne({ _id: userId });
-  await Citizen.deleteOne({ _id: citizen_id });
+  await userService.deleteUserAccount({ userId: userId});
+
   res.status(200).json({
     responseStatus: 1,
     message: 'User and citizen attached to are deleted!',

@@ -11,10 +11,8 @@ exports.getCitizenById = async ({ card_id, passport_id }) => {
 exports.createNewCitizen = async ({
   card_id,
   passport_id,
-  name: {
-    firstName,
-    lastName,
-  },
+  firstName,
+  lastName,
   gender,
   dob,
   birthPlace,

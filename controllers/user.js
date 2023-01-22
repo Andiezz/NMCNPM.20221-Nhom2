@@ -58,13 +58,11 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-  const newCitizen = citizenService.createNewCitizen({
+  const newCitizen = await citizenService.createNewCitizen({
     card_id: card_id,
     passport_id: passport_id,
-    name: {
-      firstName: firstName,
-      lastName: lastName,
-    },
+    firstName: firstName,
+    lastName: lastName,
     gender: gender,
     dob: dob,
     birthPlace: birthPlace,
@@ -77,7 +75,7 @@ exports.register = async (req, res, next) => {
     education: education,
   });
 
-  const newUser = userService.createNewUser({
+  const newUser = await userService.createNewUser({
     role: role,
     phone: phone,
     password: password,

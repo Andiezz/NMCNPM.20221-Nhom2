@@ -1,4 +1,7 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
+const Citizen = require("../models/citizen")
 
 const security = require('../utils/security');
 
@@ -13,7 +16,7 @@ exports.getUserByPhoneRole = async ({ phone, role }) => {
 };
 
 exports.getUserById = async ({ userId }) => {
-  const user = await User.findOne({ userId });
+  const user = await User.findById(userId);
   return user;
 };
 
@@ -60,7 +63,13 @@ exports.updateUserProfile = async ({
   workplace,
   education,
 }) => {
-  const check_user = await User.findOne({ userId });
+  const check_user = await User.findById(userId);
+
+  if (check_user.role === "ADMIN") {
+    const err = new Error('User is an admin.');
+    err.statusCode = 404;
+    throw err;
+  }
 
   if (!check_user) {
     const err = new Error('User not found.');
@@ -103,25 +112,25 @@ exports.updateUserProfile = async ({
     throw err;
   }
 
-  check_user.phone = phone;
-  check_user.card_id = card_id;
-  check_user.passport_id = passport_id;
-  check_user.firstName = firstName;
-  check_user.lastName = lastName;
-  check_user.gender = gender;
-  check_user.dob = dob;
-  check_user.birthPlace = birthPlace;
-  check_user.hometown = hometown;
-  check_user.residence = residence;
-  check_user.religion = religion;
-  check_user.ethic = ethic;
-  check_user.profession = profession;
-  check_user.workplace = workplace;
-  check_user.education = education;
+  check_citizen.phone = phone;
+  check_citizen.card_id = card_id;
+  check_citizen.passport_id = passport_id;
+  check_citizen.name.firstName = firstName;
+  check_citizen.name.lastName = lastName;
+  check_citizen.gender = gender;
+  check_citizen.dob = dob;
+  check_citizen.birthPlace = birthPlace;
+  check_citizen.hometown = hometown;
+  check_citizen.residence = residence;
+  check_citizen.religion = religion;
+  check_citizen.ethic = ethic;
+  check_citizen.profession = profession;
+  check_citizen.workplace = workplace;
+  check_citizen.education = education;
 
-  const updatedUser = await check_user.save();
+  const updatedUser = await check_citizen.save();
   
-  if (check_user !== updatedUser) {
+  if (check_citizen !== updatedUser) {
     const err = new Error('Failed to connect with database.');
     err.statusCode = 500;
     throw err;
@@ -156,10 +165,9 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
   return updatedUser;
 }
 
-exports.deleteUserAccount = async (userId) => {
+exports.deleteUserAccount = async ({ userId }) => {
   const user = User.findOne({ _id: userId });
   const citizen_id = user.citizen_id;
   await User.deleteOne({ _id: userId });
   await Citizen.deleteOne({ _id: citizen_id });
-
 }

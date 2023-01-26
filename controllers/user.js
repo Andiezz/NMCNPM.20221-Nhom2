@@ -138,7 +138,7 @@ exports.updateProfile = async (req, res, next) => {
   } = req.body;
   const userId = req.params.userId;
 
-  const updatedUser = userService.updateUserProfile({
+  const updatedUser = await userService.updateUserProfile({
     userId: userId,
     phone: phone,
     card_id: card_id,
@@ -185,7 +185,7 @@ exports.updatePassword = async (req, res, next) => {
       from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
     })
     .then((message) => {
-      console.log(message.sid);
+      // console.log(message.sid);
     })
     .done();
 
@@ -196,7 +196,7 @@ exports.updatePassword = async (req, res, next) => {
 };
 
 exports.userList = async (req, res, next) => {
-  const list = userService.getAllUsers;
+  const list = await userService.getAllUsers();
   res.status(200).json({
     responseStatus: 1,
     message: 'All users fetched!',

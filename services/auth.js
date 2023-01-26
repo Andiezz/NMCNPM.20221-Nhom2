@@ -85,11 +85,11 @@ exports.resetPassword = async (token, newPassword) => {
   user.password = hashedPassword;
   user.resetToken = undefined;
   user.resetTokenExpiration = undefined;
-  user.save();
+  await user.save();
 };
 
 exports.logout = async (id) => {
-  const user = User.findById(id);
+  const user = await User.findById(id);
   user.refresh_token = undefined;
-  user.save();
+  await user.save();
 };

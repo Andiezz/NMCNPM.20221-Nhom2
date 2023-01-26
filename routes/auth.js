@@ -1,18 +1,20 @@
-const express = require("express");
+const express = require('express');
 
-const { authToken } = require("../middlewares/is-auth");
-const authController = require("../controllers/auth");
+const { authToken } = require('../middlewares/is-auth');
+const authController = require('../controllers/auth');
+
+const { tryCatch } = require('../middlewares/errorHandler');
 
 const router = express.Router();
 
-router.post("/login", authController.login);
+router.post('/login', tryCatch(authController.login));
 
-router.post("/genToken", authController.generateToken);
+router.post('/genToken', tryCatch(authController.generateToken));
 
-router.post("/genResetToken", authController.genResetToken)
+router.post('/genResetToken', tryCatch(authController.genResetToken));
 
-router.patch("/resetPassword", authController.resetPassword)
+router.patch('/resetPassword', tryCatch(authController.resetPassword));
 
-router.post("/logout", authToken, authController.logout);
+router.post('/logout', authToken, tryCatch(authController.logout));
 
 module.exports = router;

@@ -5,10 +5,8 @@ require('dotenv').config();
 
 const { NotAuthenticatedError } = require('../utils/error');
 
-const User = require('../models/user');
 const authService = require('../services/auth');
 const userService = require('../services/user');
-const security = require('../utils/security');
 
 const client = require('twilio')(
 	process.env.TWILIO_ACCOUNT_SID,

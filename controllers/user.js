@@ -5,7 +5,7 @@ const { ThirdPartyError } = require('../utils/error');
 
 const userService = require('../services/user');
 const citizenService = require('../services/citizen');
-const security = require('../utils/security');
+const cardIdentityService = require('../services/cartIdentity');
 
 const client = require('twilio')(
 	process.env.TWILIO_ACCOUNT_SID,
@@ -21,6 +21,9 @@ exports.register = async (req, res, next) => {
 		phone,
 		password,
 		card_id,
+    location,
+    date,
+    expiration,
 		passport_id,
 		firstName,
 		lastName,
@@ -29,11 +32,16 @@ exports.register = async (req, res, next) => {
 		birthPlace,
 		hometown,
 		residence,
+    accommodation,
 		religion,
 		ethic,
 		profession,
 		workplace,
 		education,
+    moveInDate,
+    moveInReason,
+    moveOutDate,
+    moveOutReason,
 	} = req.body;
 	if (!role) {
 		const err = new Error('Role is required!');
@@ -61,7 +69,6 @@ exports.register = async (req, res, next) => {
 	}
 
 	const newCitizen = await citizenService.createNewCitizen({
-		card_id: card_id,
 		passport_id: passport_id,
 		firstName: firstName,
 		lastName: lastName,
@@ -70,12 +77,25 @@ exports.register = async (req, res, next) => {
 		birthPlace: birthPlace,
 		hometown: hometown,
 		residence: residence,
+    accommodation: accommodation,
 		religion: religion,
 		ethic: ethic,
 		profession: profession,
 		workplace: workplace,
 		education: education,
+    moveInDate: moveInDate,
+    moveInReason: moveInReason,
+    moveOutDate: moveOutDate,
+    moveOutReason: moveOutReason
 	});
+
+  const newCardIdentity = await cardIdentityService.createNewCardIdentity({
+    card_id: card_id,
+    citizen_id: newCitizen._id,
+    location: location,
+    date: date,
+    expiration: expiration
+  })
 
 	const newUser = await userService.createNewUser({
 		role: role,
@@ -92,7 +112,10 @@ exports.register = async (req, res, next) => {
 			from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
 		})
 		.then((message) => {
-			console.log(message.sid);
+			// console.log(message.sid);
+		})
+    .catch((err) => {
+			console.error(err);
 		})
 		.done();
 
@@ -102,6 +125,7 @@ exports.register = async (req, res, next) => {
 		data: {
 			user: newUser,
 			citizen: newCitizen,
+      CardIdentity: newCardIdentity
 		},
 	});
 };
@@ -124,6 +148,9 @@ exports.updateProfile = async (req, res, next) => {
 	const {
 		phone,
 		card_id,
+    location,
+    date,
+    expiration,
 		passport_id,
 		firstName,
 		lastName,
@@ -132,11 +159,16 @@ exports.updateProfile = async (req, res, next) => {
 		birthPlace,
 		hometown,
 		residence,
+    accommodation,
 		religion,
 		ethic,
 		profession,
 		workplace,
 		education,
+    moveInDate,
+    moveInReason,
+    moveOutDate,
+    moveOutReason
 	} = req.body;
 	const userId = req.params.userId;
 
@@ -144,6 +176,9 @@ exports.updateProfile = async (req, res, next) => {
 		userId: userId,
 		phone: phone,
 		card_id: card_id,
+    location: location,
+    date: date,
+    expiration: expiration,
 		passport_id: passport_id,
 		firstName: firstName,
 		lastName: lastName,
@@ -152,11 +187,16 @@ exports.updateProfile = async (req, res, next) => {
 		birthPlace: birthPlace,
 		hometown: hometown,
 		residence: residence,
+    accommodation: accommodation,
 		religion: religion,
 		ethic: ethic,
 		profession: profession,
 		workplace: workplace,
 		education: education,
+    moveInDate: moveInDate,
+    moveInReason: moveInReason,
+    moveOutDate: moveOutDate,
+    moveOutReason: moveOutReason
 	});
 
 	res.status(200).json({

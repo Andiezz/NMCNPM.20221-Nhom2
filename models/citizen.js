@@ -3,68 +3,93 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const citizenSchema = new Schema({
-    card_id: {
-        type: String,
-        required: true,
+  household_id: {
+    type: String,
+  },
+  passport_id: {
+    type: String,
+    required: true,
+  },
+  name: {
+    firstName: {
+      type: String,
+      required: true,
     },
-    household_id: {
-        type: String,
+    lastName: {
+      type: String,
+      required: true,
     },
-    passport_id: {
-        type: String,
-        required: true,
+  },
+  gender: {
+    type: String,
+    enum: ['MALE', 'FEMALE', 'OTHER'],
+    require: true,
+  },
+  dob: {
+    type: Date,
+    required: true,
+  },
+  birthPlace: {
+    type: String,
+    required: true,
+  },
+  hometown: {
+    type: String,
+    required: true,
+  },
+  residence: {
+    type: String,
+    required: true,
+  },
+  accommodation: {
+    type: String,
+    required: true,
+  },
+  religion: {
+    type: String,
+    required: true,
+  },
+  ethic: {
+    type: String,
+    required: true,
+  },
+  profession: {
+    type: String,
+    required: true,
+  },
+  workplace: {
+    type: String,
+    required: true,
+  },
+  education: {
+    type: Number,
+    required: true,
+  },
+  moveIn: {
+    date: {
+      type: Date,
+      required: false,
     },
-    name: {
-        firstName: {
-            type: String,
-            required: true,
-        },
-        lastName: {
-            type: String,
-            required: true,
-        },
+    reason: {
+      type: String,
+      required: false,
     },
-    gender: {
-        type: String,
-        enum: ["MALE", "FEMALE", "OTHER"],
-        require: true,
+  },
+  moveOut: {
+    date: {
+      type: Date,
+      required: false,
     },
-    dob: {
-        type: Date,
-        required: true,
+    reason: {
+      type: String,
+      required: false,
     },
-    birthPlace: {
-        type: String,
-        required: true,
-    },
-    hometown: {
-        type: String,
-        required: true,
-    },
-    residence: {
-        type: String,
-        required: true,
-    },
-    religion: {
-        type: String,
-        required: true,
-    },
-    ethic: {
-        type: String,
-        required: true,
-    },
-    profession: {
-        type: String,
-        required: true,
-    },
-    workplace: {
-        type: String,
-        required: true,
-    },
-    education: {
-        type: Number,
-        required: true,
-    },
+  },
+  modifiedBy: {
+    type: mongoose.Types.ObjectId,
+    required: false,
+    ref: 'User',
+  },
 });
 
 module.exports = mongoose.model('Citizen', citizenSchema);

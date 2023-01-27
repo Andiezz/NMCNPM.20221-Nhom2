@@ -18,11 +18,16 @@ exports.createNewCitizen = async ({
   birthPlace,
   hometown,
   residence,
+  accommodation,
   religion,
   ethic,
   profession,
   workplace,
   education,
+  moveInDate,
+  moveInReason,
+  moveOutDate,
+  moveOutReason,
 }) => {
   const citizen = new Citizen({
     card_id: card_id,
@@ -36,11 +41,16 @@ exports.createNewCitizen = async ({
     birthPlace: birthPlace,
     hometown: hometown,
     residence: residence,
+    accommodation: accommodation,
     religion: religion,
     ethic: ethic,
     profession: profession,
     workplace: workplace,
     education: education,
+    moveInDate: moveInDate,
+    moveInReason: moveInReason,
+    moveOutDate: moveOutDate,
+    moveOutReason: moveOutReason
   });
 
   const newCitizen = await citizen.save();

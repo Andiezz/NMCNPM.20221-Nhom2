@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
 require('dotenv').config();
+const { errorHandler } = require('./middlewares/errorHandler');
+const { NotFoundError } = require('./utils/error');
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', true);
@@ -33,6 +35,12 @@ app.use(
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
+
+// ==================== Errors Handler =====================
+app.all('*', (req, res, next) => {
+	throw new NotFoundError();
+});
+app.use(errorHandler);
 
 mongoose
 	.connect(process.env.MONGO_DATABASE)

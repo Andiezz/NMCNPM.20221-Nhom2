@@ -199,7 +199,7 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
 };
 
 exports.deleteUserAccount = async ({ userId }) => {
-	const user = User.findById(userId);
+	const user = await User.findById(userId);
 	const citizen_id = user.citizen_id;
 	await User.deleteOne({ _id: userId });
 	await Citizen.deleteOne({ _id: citizen_id });

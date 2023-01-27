@@ -20,7 +20,7 @@ exports.login = async (req, res, next) => {
 		throw new NotAuthenticatedError('User not found');
 	}
 
-	const isEqual = bcrypt.compare(password, check_user.password);
+	const isEqual = await bcrypt.compare(password, check_user.password);
 	if (!isEqual) {
 		const err = new Error('Wrong password.');
 		err.statusCode = 401;

@@ -104,20 +104,20 @@ exports.register = async (req, res, next) => {
 		citizen_id: newCitizen._id,
 	});
 
-	client.messages
-		.create({
-			to: '+84584702251', //? for test, replace with:
-			// to: "+84" + newUser.phone.slice(1)
-			body: 'An account with this phone number has registered successfully!',
-			from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
-		})
-		.then((message) => {
-			// console.log(message.sid);
-		})
-    .catch((err) => {
-			console.error(err);
-		})
-		.done();
+	// client.messages
+	// 	.create({
+	// 		to: '+84584702251', //? for test, replace with:
+	// 		// to: "+84" + newUser.phone.slice(1)
+	// 		body: 'An account with this phone number has registered successfully!',
+	// 		from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
+	// 	})
+	// 	.then((message) => {
+	// 		// console.log(message.sid);
+	// 	})
+  //   .catch((err) => {
+	// 		console.error(err);
+	// 	})
+	// 	.done();
 
 	res.status(200).json({
 		responseStatus: 1,
@@ -218,21 +218,21 @@ exports.updatePassword = async (req, res, next) => {
 		newPassword: newPassword,
 	});
 
-	client.messages
-		.create({
-			to: '+84584702251', //? for test, replace with:
-			// to: "+84" + newUser.phone.slice(1)
-			body: `User: ${updatedUser.name}.\n
-	          Password updated successfully!`,
-			from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
-		})
-		.then((message) => {
-			// console.log(message.sid);
-		})
-		.catch((err) => {
-			console.error(err);
-		})
-		.done();
+	// client.messages
+	// 	.create({
+	// 		to: '+84584702251', //? for test, replace with:
+	// 		// to: "+84" + newUser.phone.slice(1)
+	// 		body: `User: ${updatedUser.name}.\n
+	//           Password updated successfully!`,
+	// 		from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
+	// 	})
+	// 	.then((message) => {
+	// 		// console.log(message.sid);
+	// 	})
+	// 	.catch((err) => {
+	// 		console.error(err);
+	// 	})
+	// 	.done();
 
 	res.status(200).json({
 		responseStatus: 1,

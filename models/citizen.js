@@ -8,7 +8,7 @@ const citizenSchema = new Schema({
   },
   passport_id: {
     type: String,
-    required: true,
+    required: false,
   },
   name: {
     firstName: {

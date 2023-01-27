@@ -66,8 +66,8 @@ exports.updateUserProfile = async ({
 	phone,
 	card_id,
 	location,
-    date,
-    expiration,
+  date,
+  expiration,
 	passport_id,
 	firstName,
 	lastName,
@@ -83,9 +83,9 @@ exports.updateUserProfile = async ({
 	workplace,
 	education,
 	moveInDate,
-    moveInReason,
-    moveOutDate,
-    moveOutReason
+  moveInReason,
+  moveOutDate,
+  moveOutReason
 }) => {
 	const check_user = await User.findById(userId);
 

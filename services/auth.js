@@ -67,7 +67,8 @@ exports.genResetToken = async (buffer, user) => {
   }
   user.resetToken = token;
   user.resetTokenExpiration = Date.now() + 3600000;
-  user.save();
+  await user.save();
+  return token;
 };
 
 exports.resetPassword = async (token, newPassword) => {

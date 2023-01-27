@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const userService = require('../services/user');
@@ -9,9 +8,6 @@ const client = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
-
-const User = require('../models/user');
-const Citizen = require('../models/citizen');
 
 exports.register = async (req, res, next) => {
   const {

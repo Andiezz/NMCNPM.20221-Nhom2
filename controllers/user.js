@@ -183,7 +183,7 @@ exports.updatePassword = async (req, res, next) => {
 			to: '+84584702251', //? for test, replace with:
 			// to: "+84" + newUser.phone.slice(1)
 			body: `User: ${updatedUser.name}.\n
-            Password updated successfully!`,
+	          Password updated successfully!`,
 			from: process.env.TWILIO_ACTIVE_PHONE_NUMBER,
 		})
 		.then((message) => {

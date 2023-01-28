@@ -2,7 +2,7 @@ const express = require('express');
 
 const isAuth = require('../middlewares/is-auth');
 const userController = require('../controllers/user');
-const user = require('../models/user');
+const validator = require('../middlewares/validator');
 
 const { tryCatch } = require('../middlewares/errorHandler');
 
@@ -12,6 +12,7 @@ router.post(
   '/register',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
+  validator.register,
   tryCatch(userController.register)
 );
 
@@ -24,12 +25,14 @@ router.get(
 router.patch(
   '/profile/:userId',
   isAuth.authToken,
+  validator.updateUserProfile,
   tryCatch(userController.updateProfile)
 );
 
 router.patch(
   '/updatePassword/:userId',
   isAuth.authToken,
+  validator.updatePassword,
   tryCatch(userController.updatePassword)
 );
 

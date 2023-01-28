@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const User_History = require('./userHistory');
+const UserHistory = require('./userHistory');
 
 const Schema = mongoose.Schema;
 
@@ -38,7 +38,7 @@ const userSchema = new Schema(
 
 userSchema.pre('save', async function (next) {
   if (this.version != null) {
-    const history = new User_History();
+    const history = new UserHistory();
     history.role = this.role;
     history.status = this.status;
     history.citizen_id = this.citizen_id;

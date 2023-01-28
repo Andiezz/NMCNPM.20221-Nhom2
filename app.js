@@ -13,6 +13,7 @@ mongoose.set('strictQuery', true);
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const feeRoutes = require('./routes/fee');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use(
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
+app.use('/fee', feeRoutes);
 
 // ==================== Errors Handler =====================
 app.all('*', (req, res, next) => {

@@ -79,6 +79,7 @@ exports.register = async (req, res, next) => {
     moveInReason: moveInReason,
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
+    modifiedBy: req.user._id
   });
 
   const newCardIdentity = await cardIdentityService.createNewCardIdentity({
@@ -118,8 +119,11 @@ exports.profile = async (req, res, next) => {
     throw error;
   }
   res.status(200).json({
+    responseStatus: 1,
     message: 'User fetched!',
-    user: check_user,
+    data: {
+      user: check_user,
+    }
   });
 };
 
@@ -176,6 +180,7 @@ exports.updateProfile = async (req, res, next) => {
     moveInReason: moveInReason,
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
+    modifiedBy: req.user.userId
   });
 
   res.status(200).json({

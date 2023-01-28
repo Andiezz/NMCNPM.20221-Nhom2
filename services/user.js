@@ -85,7 +85,8 @@ exports.updateUserProfile = async ({
 	moveInDate,
   moveInReason,
   moveOutDate,
-  moveOutReason
+  moveOutReason,
+	modifiedBy
 }) => {
 	const check_user = await User.findById(userId);
 
@@ -136,7 +137,7 @@ exports.updateUserProfile = async ({
 		throw err;
 	}
 
-	check_citizen.phone = phone;
+	check_user.phone = phone;
 	check_cardId.card_id = card_id;
 	check_cardId.location = location,
 	check_cardId.date = date,
@@ -159,11 +160,13 @@ exports.updateUserProfile = async ({
 	check_citizen.moveIn.reason = moveInReason;
 	check_citizen.moveOut.date = moveOutDate;
 	check_citizen.moveOut.reason = moveOutReason;
+	check_citizen.modifiedBy = modifiedBy;
 
-	const updatedUser = await check_citizen.save();
+	const updatedUser = await check_user.save();
+	const updatedCitizen = await check_citizen.save();
 	const updatedCardId = await check_cardId.save();
 
-	if (check_citizen !== updatedUser || check_cardId !== updatedCardId) {
+	if (check_citizen !== updatedCitizen || check_cardId !== updatedCardId) {
 		const err = new Error('Failed to connect with database.');
 		err.statusCode = 500;
 		throw err;

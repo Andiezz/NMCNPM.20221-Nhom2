@@ -48,7 +48,7 @@ mongoose
 	.connect(process.env.MONGO_DATABASE)
 	.then(() => {
 		app.listen(3000);
-		console.log('============ Database Connected ==========');
+		console.log('============ Database Connected ============');
 	})
 	.catch((err) => {
 		console.log(err);

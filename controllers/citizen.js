@@ -31,7 +31,7 @@ exports.createCitizen = async (req, res, next) => {
     moveOutReason,
   } = req.body;
 
-  const newCitizen = await citizenService.createNewCitizen({
+  const newCitizen = await citizenService.createCitizen({
     passport_id: passport_id,
     firstName: firstName,
     lastName: lastName,
@@ -53,7 +53,7 @@ exports.createCitizen = async (req, res, next) => {
     modifiedBy: req.user._id,
   });
 
-  const newCardIdentity = await cardIdentityService.createNewCardIdentity({
+  const newCardIdentity = await cardIdentityService.createCardIdentity({
     card_id: card_id,
     citizen_id: newCitizen._id,
     location: location,
@@ -66,12 +66,12 @@ exports.createCitizen = async (req, res, next) => {
     message: 'New citizen created!',
     data: {
       citizen: newCitizen,
-      CardIdentity: newCardIdentity,
+      cardIdentity: newCardIdentity,
     },
   });
 };
 
-exports.profile = async (req, res, next) => {
+exports.getCitizen = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
   const check_citizen = await Citizen.findById(citizen_id);
   if (!check_citizen) {
@@ -87,7 +87,7 @@ exports.profile = async (req, res, next) => {
   });
 };
 
-exports.updateProfile = async (req, res, next) => {
+exports.updateCitizen = async (req, res, next) => {
   const {
     card_id,
     location,
@@ -115,7 +115,7 @@ exports.updateProfile = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
 
   const { savedCardId, savedCitizen } =
-    await citizenService.updateCitizenProfile({
+    await citizenService.updateCitizen({
       citizen_id: citizen_id,
       card_id: card_id,
       location: location,
@@ -150,4 +150,28 @@ exports.updateProfile = async (req, res, next) => {
       updatedCitizen: savedCitizen
     },
   });
+};
+
+exports.citizenList = async(req, res, next) => {
+  const list = await citizenService.citizenList();
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched all citizens',
+    data: { list: list },
+  });
+}
+
+exports.deleteCitizen = async (req, res) => {
+  const citizen_id = req.params.citizen_id;
+  const result = await citizenService.deleteCitizenById(citizen_id);
+
+  if (!result) {
+    return res
+      .status(400)
+      .json({ response_status: 0, message: 'Delete Citizen fail.' });
+  }
+
+  res
+    .status(200)
+    .json({ response_status: 1, message: 'Delete citizen successfully.' });
 };

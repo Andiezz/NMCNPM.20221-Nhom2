@@ -19,14 +19,14 @@ router.post(
 router.get(
   '/profile/:userId',
   isAuth.authToken,
-  tryCatch(userController.profile)
+  tryCatch(userController.getUser)
 );
 
 router.patch(
   '/profile/:userId',
   isAuth.authToken,
   validator.updateUserProfile,
-  tryCatch(userController.updateProfile)
+  tryCatch(userController.updateUser)
 );
 
 router.patch(

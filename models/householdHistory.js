@@ -78,4 +78,4 @@ const householdHistorySchema = new Schema(
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-module.exports = mongoose.model('Household', householdHistorySchema);
+module.exports = mongoose.model('Household_History', householdHistorySchema);

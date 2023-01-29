@@ -1,17 +1,17 @@
 const express = require('express');
 
-const { authToken } = require('../middlewares/is-auth');
+const { authToken, authRole } = require('../middlewares/is-auth');
 const householdController = require('../controllers/household');
 
 const { tryCatch } = require('../middlewares/errorHandler');
 
 const router = express.Router();
 
-// router.post(
-//   '/create_household',
-//   isAuth.authToken,
-//   isAuth.authRole(['ADMIN', 'LEADER']),
-//   tryCatch(householdController)
-// );
+router.post(
+  '/create',
+  authToken,
+  authRole(['ADMIN', 'LEADER']),
+  tryCatch(householdController.createHousehold)
+);
 
 module.exports = router;

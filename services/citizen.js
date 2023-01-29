@@ -1,4 +1,3 @@
-const cardIdentity = require('../models/cardIdentity');
 const Citizen = require('../models/citizen');
 
 const cardIdentityService = require("../services/cartIdentity");
@@ -13,7 +12,7 @@ exports.getCitizenById = async ({ card_id, passport_id }) => {
   return citizen;
 };
 
-exports.createNewCitizen = async ({
+exports.createCitizen = async ({
   card_id,
   passport_id,
   firstName,
@@ -69,7 +68,7 @@ exports.createNewCitizen = async ({
   return newCitizen;
 };
 
-exports.updateCitizenProfile = async ({
+exports.updateCitizen = async ({
   citizen_id,
   card_id,
   location,
@@ -131,4 +130,12 @@ exports.updateCitizenProfile = async ({
   })
 
   return { savedCardId: savedCardId, savedCitizen: savedCitizen }
+};
+
+exports.citizenList = async () => {
+  return await Citizen.find();
+};
+
+exports.deleteCitizenById = async (citizen_id) => {
+  return await Citizen.findByIdAndDelete(citizen_id);
 };

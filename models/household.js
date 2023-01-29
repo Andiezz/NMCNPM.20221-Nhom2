@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const HouseholdHistory = require("./householdHistory");
+const HouseholdHistory = require('./householdHistory');
 
 const Schema = mongoose.Schema;
 
@@ -12,7 +12,7 @@ const householdSchema = new Schema(
     owner_id: {
       type: mongoose.Types.ObjectId,
       required: true,
-      ref: "Citizen",
+      ref: 'Citizen',
     },
     areaCode: {
       type: String,
@@ -36,50 +36,49 @@ const householdSchema = new Schema(
         require: true,
       },
     },
-    members: {
-      citizen_id: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "Citizen",
+    members: [
+      {
+        citizen_id: {
+          type: mongoose.Types.ObjectId,
+          required: true,
+          ref: 'Citizen',
+        },
+        relation: {
+          type: String,
+          required: true,
+        },
       },
-      relation: {
-        type: String,
-        required: true,
-      },
-    },
+    ],
     move_in: {
       date: {
         type: Date,
-        required: false
+        required: false,
       },
       reason: {
         type: String,
-        required: false
-      }
+        required: false,
+      },
     },
     move_out: {
       date: {
         type: Date,
-        required: false
+        required: false,
       },
       reason: {
         type: String,
-        required: false
-      }
+        required: false,
+      },
     },
     modifiedBy: {
       type: mongoose.Types.ObjectId,
-      ref: "User",
-      required: true
+      ref: 'User',
+      required: true,
     },
-    refresh_token: String,
-    resetToken: String,
-    resetTokenExpiration: String,
   },
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-userSchema.pre('save', async function (next) {
+householdSchema.pre('save', async function (next) {
   if (this.version != null) {
     const history = new HouseholdHistory();
     history.household_id = this.household_id;

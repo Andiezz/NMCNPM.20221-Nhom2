@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const feeRoutes = require('./routes/fee');
 const citizenRoutes = require('./routes/citizen');
+const householdRoutes = require("./routes/household");
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/fee', feeRoutes);
 app.use('/citizen', citizenRoutes);
+app.use('/household', householdRoutes);
 
 // ==================== Errors Handler =====================
 app.all('*', (req, res, next) => {

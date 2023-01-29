@@ -60,7 +60,7 @@ exports.register = async (req, res, next) => {
     throw err;
   }
 
-  const newCitizen = await citizenService.createNewCitizen({
+  const newCitizen = await citizenService.createCitizen({
     passport_id: passport_id,
     firstName: firstName,
     lastName: lastName,
@@ -82,7 +82,7 @@ exports.register = async (req, res, next) => {
     modifiedBy: req.user._id
   });
 
-  const newCardIdentity = await cardIdentityService.createNewCardIdentity({
+  const newCardIdentity = await cardIdentityService.createCardIdentity({
     card_id: card_id,
     citizen_id: newCitizen._id,
     location: location,
@@ -110,7 +110,7 @@ exports.register = async (req, res, next) => {
   });
 };
 
-exports.profile = async (req, res, next) => {
+exports.getUser = async (req, res, next) => {
   const userId = req.params.userId;
   const check_user = await userService.getUserById({ userId });
   if (!check_user) {
@@ -127,7 +127,7 @@ exports.profile = async (req, res, next) => {
   });
 };
 
-exports.updateProfile = async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
   const {
     phone,
     card_id,

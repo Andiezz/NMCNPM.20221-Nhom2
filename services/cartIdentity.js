@@ -2,7 +2,7 @@ const CardIdentity = require('../models/cardIdentity');
 
 const { DatabaseConnectionError } = require("../utils/error")
 
-exports.createNewCardIdentity = async ({
+exports.createCardIdentity = async ({
   citizen_id,
   card_id,
   location,

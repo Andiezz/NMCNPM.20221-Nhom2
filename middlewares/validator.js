@@ -1,6 +1,7 @@
-const { body, query } = require('express-validator');
+const { body, query, param } = require('express-validator');
 
 const User = require('../models/user');
+const Fee = require('../models/fee');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 
@@ -200,8 +201,7 @@ exports.updateUserProfile = [
       }
       return true;
     })
-    .withMessage('Phone has already existed.')
-  ,
+    .withMessage('Phone has already existed.'),
   body('card_id')
     .exists()
     .withMessage('Card identity number is required')
@@ -301,12 +301,8 @@ exports.updateUserProfile = [
     .withMessage('Education is required')
     .trim()
     .isNumeric(),
-  body('moveInDate')
-    .isDate()
-    .withMessage('Invalid move in date'),
-  body('moveOutDate')
-    .isDate()
-    .withMessage('Invalid move out date'),
+  body('moveInDate').isDate().withMessage('Invalid move in date'),
+  body('moveOutDate').isDate().withMessage('Invalid move out date'),
 ];
 
 exports.updatePassword = [
@@ -439,10 +435,7 @@ exports.updateCitizenProfile = [
       const citizen_id = req.params.citizen_id;
       const card_id = await CardIdentity.findOne({ card_id: value });
 
-      if (
-        card_id &&
-        card_id.citizen_id.toString() !== citizen_id
-      ) {
+      if (card_id && card_id.citizen_id.toString() !== citizen_id) {
         return Promise.reject();
       }
       return true;
@@ -529,4 +522,41 @@ exports.updateCitizenProfile = [
     .withMessage('Education is required')
     .trim()
     .isNumeric(),
+];
+
+exports.fee = [
+  body('name')
+    .exists()
+    .withMessage("Fee's name is required")
+    .isAlphanumeric('vi-VN', { ignore: ' -,./' })
+    .withMessage("Fee's name must not contain special character")
+    .trim(),
+  body('required')
+    .exists()
+    .withMessage('Required cant be null')
+    .isInt()
+    .custom((value, { req }) => {
+      if (value < 0) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage('Required number must be positive'),
+  body('memberPayment')
+    .exists()
+    .withMessage('Member Payment check is required')
+    .isBoolean()
+    .withMessage('Member Payment check must be boolean type'),
+];
+
+exports.fee_id = [
+  param('fee_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Fee.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Fee not found'),
 ];

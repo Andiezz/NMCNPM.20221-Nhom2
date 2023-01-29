@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed_admin": "npx run-func .\\utils\\seeder.js adminInit",
+    "seed_fee": "npx run-func .\\utils\\seeder.js feeInit",
     "start": "nodemon app.js"
   },
   "repository": {

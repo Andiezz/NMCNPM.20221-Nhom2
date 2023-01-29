@@ -35,7 +35,7 @@ const householdHistorySchema = new Schema(
         require: true,
       },
     },
-    members: {
+    members: [{
       citizen_id: {
         type: mongoose.Types.ObjectId,
         required: true,
@@ -45,7 +45,7 @@ const householdHistorySchema = new Schema(
         type: String,
         required: true,
       },
-    },
+    }],
     move_in: {
       date: {
         type: Date,
@@ -71,11 +71,8 @@ const householdHistorySchema = new Schema(
       ref: "User",
       required: true
     },
-    refresh_token: String,
-    resetToken: String,
-    resetTokenExpiration: String,
   },
-  { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
+  { timestamps: true, versionKey: false }
 );
 
 module.exports = mongoose.model('Household_History', householdHistorySchema);

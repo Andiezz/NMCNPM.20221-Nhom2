@@ -5,6 +5,8 @@ const security = require('../utils/security');
 
 const User = require('../models/user');
 const Fee = require('../models/fee');
+const Transaction = require('../models/transaction');
+const Household = require('../models/household');
 
 exports.adminInit = async () => {
   try {
@@ -39,6 +41,9 @@ exports.feeInit = async () => {
     mongoose.connect(process.env.MONGO_DATABASE);
     await Fee.deleteMany();
     console.log('Deleted all fee');
+    await Transaction.deleteMany();
+    console.log('Deleted all transaction');
+
     const fee = [
       {
         name: 'Phí vệ sinh',
@@ -61,6 +66,23 @@ exports.feeInit = async () => {
     const result = await Fee.insertMany(fee);
 
     if (result) console.log('Init fee successfully');
+
+    const fee_list = await Fee.find({ required: { $ne: 0 } });
+    const household_list = await Household.find();
+
+    for (i = 0; i < fee_list.length; i++) {
+      let total = fee_list[i].required * 12;
+      for (j = 0; j < household_list.length; j++) {
+        if (fee_list[i].memberPayment) {
+          total = household_list[j].members.length * 12 * fee_list[i].required;
+        }
+        await Transaction.create({
+          fee_id: fee_list[i]._id,
+          household_id: household_list[j]._id,
+          cost: total,
+        });
+      }
+    }
 
     mongoose.connection.close();
   } catch (error) {

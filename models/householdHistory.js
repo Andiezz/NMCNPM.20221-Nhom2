@@ -71,6 +71,10 @@ const householdHistorySchema = new Schema(
       ref: "User",
       required: true
     },
+    version: {
+			type: Number,
+			required: true,
+		},
   },
   { timestamps: true, versionKey: false }
 );

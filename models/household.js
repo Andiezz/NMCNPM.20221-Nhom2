@@ -94,6 +94,7 @@ householdSchema.pre('save', async function (next) {
     history.move_out.date = this.move_out.date;
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
+    history.version = this.version;
     await history.save();
   }
   next();

@@ -1,6 +1,10 @@
 require('dotenv').config();
 
-const { ThirdPartyError } = require('../utils/error');
+const {
+  ThirdPartyError,
+  DataNotFoundError,
+  BadRequestError,
+} = require('../utils/error');
 
 const userService = require('../services/user');
 const citizenService = require('../services/citizen');
@@ -35,31 +39,6 @@ exports.register = async (req, res, next) => {
     moveOutDate,
     moveOutReason,
   } = req.body;
-  if (!role) {
-    const err = new Error('Role is required!');
-    err.statusCode = 422;
-    throw err;
-  }
-
-  const check_user = await userService.getUserByPhoneRole({ phone, role });
-
-  if (check_user) {
-    const err = new Error('This account has already existed!');
-    err.statusCode = 400;
-    throw err;
-  }
-
-  const check_citizen = await citizenService.getCitizenById({
-    card_id,
-    passport_id,
-  });
-
-  if (check_citizen) {
-    const err = new Error('This citizen has already existed!');
-    err.statusCode = 400;
-    throw err;
-  }
-
   const newCitizen = await citizenService.createCitizen({
     passport_id: passport_id,
     firstName: firstName,
@@ -79,7 +58,7 @@ exports.register = async (req, res, next) => {
     moveInReason: moveInReason,
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
-    modifiedBy: req.user._id
+    modifiedBy: req.user._id,
   });
 
   const newCardIdentity = await cardIdentityService.createCardIdentity({
@@ -110,20 +89,37 @@ exports.register = async (req, res, next) => {
   });
 };
 
+exports.createUser = async (req, res, next) => {
+  const { role, phone, password, citizen_id } = req.body;
+
+  const user = await userService.createNewUser({
+    role: role,
+    phone: phone,
+    password: password,
+    citizen_id: citizen_id,
+  });
+
+  res.status(200).json({
+    responseStatus: 1,
+    message: 'User created!',
+    data: {
+      user: user,
+    },
+  });
+};
+
 exports.getUser = async (req, res, next) => {
   const userId = req.params.userId;
   const check_user = await userService.getUserById({ userId });
   if (!check_user) {
-    const error = new Error('User not found');
-    error.statusCode = 404;
-    throw error;
+    throw new DataNotFoundError('User not found');
   }
   res.status(200).json({
     responseStatus: 1,
     message: 'User fetched!',
     data: {
       user: check_user,
-    }
+    },
   });
 };
 
@@ -180,7 +176,7 @@ exports.updateUser = async (req, res, next) => {
     moveInReason: moveInReason,
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
-    modifiedBy: req.user.userId
+    modifiedBy: req.user.userId,
   });
 
   res.status(200).json({
@@ -196,7 +192,7 @@ exports.updatePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
   const userId = req.params.userId;
 
-  const updatedUser = await userService.updateUserPassword({
+  await userService.updateUserPassword({
     userId: userId,
     oldPassword: oldPassword,
     newPassword: newPassword,
@@ -227,6 +223,6 @@ exports.deleteAccount = async (req, res, next) => {
 
   res.status(200).json({
     responseStatus: 1,
-    message: 'User and citizen attached to are deleted!',
+    message: 'User deleted!',
   });
 };

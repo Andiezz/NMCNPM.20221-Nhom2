@@ -1,8 +1,11 @@
 const Citizen = require('../models/citizen');
+const CardIdentity = require('../models/cardIdentity');
+const Household = require('../models/household');
 
-const cardIdentityService = require("../services/cartIdentity");
+const cardIdentityService = require('../services/cartIdentity');
+const householdService = require('../services/household')
 
-const { DatabaseConnectionError } = require("../utils/error");
+const { DatabaseConnectionError } = require('../utils/error');
 
 exports.getCitizenById = async ({ card_id, passport_id }) => {
   const citizen = await Citizen.findOne({
@@ -96,40 +99,40 @@ exports.updateCitizen = async ({
 }) => {
   const updatedCitizen = await Citizen.findById(citizen_id);
 
-	updatedCitizen.passport_id = passport_id;
-	updatedCitizen.name.firstName = firstName;
-	updatedCitizen.name.lastName = lastName;
-	updatedCitizen.gender = gender;
-	updatedCitizen.dob = dob;
-	updatedCitizen.birthPlace = birthPlace;
-	updatedCitizen.hometown = hometown;
-	updatedCitizen.residence = residence;
-	updatedCitizen.accommodation = accommodation;
-	updatedCitizen.religion = religion;
-	updatedCitizen.ethic = ethic;
-	updatedCitizen.profession = profession;
-	updatedCitizen.workplace = workplace;
-	updatedCitizen.education = education;
-	updatedCitizen.moveIn.date = moveInDate;
-	updatedCitizen.moveIn.reason = moveInReason;
-	updatedCitizen.moveOut.date = moveOutDate;
-	updatedCitizen.moveOut.reason = moveOutReason;
+  updatedCitizen.passport_id = passport_id;
+  updatedCitizen.name.firstName = firstName;
+  updatedCitizen.name.lastName = lastName;
+  updatedCitizen.gender = gender;
+  updatedCitizen.dob = dob;
+  updatedCitizen.birthPlace = birthPlace;
+  updatedCitizen.hometown = hometown;
+  updatedCitizen.residence = residence;
+  updatedCitizen.accommodation = accommodation;
+  updatedCitizen.religion = religion;
+  updatedCitizen.ethic = ethic;
+  updatedCitizen.profession = profession;
+  updatedCitizen.workplace = workplace;
+  updatedCitizen.education = education;
+  updatedCitizen.moveIn.date = moveInDate;
+  updatedCitizen.moveIn.reason = moveInReason;
+  updatedCitizen.moveOut.date = moveOutDate;
+  updatedCitizen.moveOut.reason = moveOutReason;
   updatedCitizen.modifiedBy = modifiedBy;
 
   const savedCitizen = await updatedCitizen.save();
 
   if (savedCitizen !== updatedCitizen) {
-		throw new DatabaseConnectionError('Failed to connect with database.');
-	}
+    throw new DatabaseConnectionError('Failed to connect with database.');
+  }
 
   const savedCardId = await cardIdentityService.updateCardIdentity({
     card_id: card_id,
     location: location,
     date: date,
-    expiration: expiration
-  })
+    expiration: expiration,
+  });
 
-  return { savedCardId: savedCardId, savedCitizen: savedCitizen }
+  return { savedCardId: savedCardId, savedCitizen: savedCitizen };
 };
 
 exports.citizenList = async () => {
@@ -137,5 +140,16 @@ exports.citizenList = async () => {
 };
 
 exports.deleteCitizenById = async (citizen_id) => {
+  const citizen = await Citizen.findById(citizen_id);
+  const card_id = citizen.card_id;
+  await CardIdentity.findByIdAndDelete(card_id);
+
+  if (citizen.household_id != null) {
+    await householdService.removeMember({
+      household_id: citizen.household_id,
+      citizen_id: citizen_id
+    })
+  }
+
   return await Citizen.findByIdAndDelete(citizen_id);
 };

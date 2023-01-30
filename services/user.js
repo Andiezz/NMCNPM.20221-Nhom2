@@ -5,6 +5,7 @@ const Citizen = require('../models/citizen');
 const CardIdentity = require("../models/cardIdentity")
 
 const security = require('../utils/security');
+const { DatabaseConnectionError, DataNotFoundError, RequestValidationError, BadRequestError } = require('../utils/error');
 
 exports.getUserByPhone = async ({ phone }) => {
 	const user = await User.findOne({ phone: phone });
@@ -53,9 +54,7 @@ exports.createNewUser = async ({ role, phone, password, citizen_id }) => {
 
 	const newUser = await user.save();
 	if (newUser !== user) {
-		const err = new Error('Failed to connect with database.');
-		err.statusCode = 500;
-		throw err;
+		throw new DatabaseConnectionError('Failed to connect with database.');
 	}
 
 	return newUser;
@@ -91,15 +90,11 @@ exports.updateUserProfile = async ({
 	const check_user = await User.findById(userId);
 
 	if (check_user.role === 'ADMIN') {
-		const err = new Error('User is an admin.');
-		err.statusCode = 404;
-		throw err;
+		throw new BadRequestError('User is an admin.');
 	}
 
 	if (!check_user) {
-		const err = new Error('User not found.');
-		err.statusCode = 404;
-		throw err;
+		throw new DataNotFoundError('User not found.');
 	}
 
 	//? can replace with validator
@@ -112,18 +107,14 @@ exports.updateUserProfile = async ({
 	});
 
 	if (check_cardId && check_cardId.citizen_id.toString() !== check_citizen._id.toString()) {
-		const err = new Error('This card identity has already been used.');
-		err.statusCode = 400;
-		throw err;
+		throw new RequestValidationError('This card identity has already been used.');
 	}
 
 	if (
 		check_passportId &&
 		check_passportId._id.toString() !== check_citizen._id.toString()
 	) {
-		const err = new Error('This passport identity has already been used.');
-		err.statusCode = 400;
-		throw err;
+		throw new RequestValidationError('This passport identity has already been used.');
 	}
 
 	const check_phone = await User.findOne({
@@ -132,9 +123,7 @@ exports.updateUserProfile = async ({
 	});
 
 	if (check_phone && phone != check_phone.phone) {
-		const err = new Error('This phone has already been used.');
-		err.statusCode = 400;
-		throw err;
+		throw new RequestValidationError('This phone has already been used.');
 	}
 
 	check_user.phone = phone;
@@ -167,9 +156,7 @@ exports.updateUserProfile = async ({
 	const updatedCardId = await check_cardId.save();
 
 	if (check_citizen !== updatedCitizen || check_cardId !== updatedCardId) {
-		const err = new Error('Failed to connect with database.');
-		err.statusCode = 500;
-		throw err;
+		throw new DatabaseConnectionError('Failed to connect with database.');
 	}
 
 	return updatedUser;
@@ -178,9 +165,7 @@ exports.updateUserProfile = async ({
 exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
 	const check_user = await User.findById(userId);
 	if (!check_user) {
-		const err = new Error('User not found.');
-		err.statusCode = 404;
-		throw err;
+		throw new DataNotFoundError('User not found.');
 	}
 	const isEqual = await bcrypt.compare(oldPassword, check_user.password);
 	if (!isEqual) {
@@ -193,18 +178,12 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
 	const updatedUser = await check_user.save();
 
 	if (check_user !== updatedUser) {
-		const err = new Error('Failed to connect with database.');
-		err.statusCode = 500;
-		throw err;
+		throw new DatabaseConnectionError('Failed to connect with database.');
 	}
 
 	return updatedUser;
 };
 
 exports.deleteUserAccount = async ({ userId }) => {
-	const user = await User.findById(userId);
-	const citizen_id = user.citizen_id;
 	await User.deleteOne({ _id: userId });
-	await Citizen.deleteOne({ _id: citizen_id });
-	await CardIdentity.deleteOne({ citizen_id: citizen_id })
 };

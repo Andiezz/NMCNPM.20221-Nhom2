@@ -3,11 +3,7 @@ require('dotenv').config();
 
 const User = require('../models/user');
 const security = require('../utils/security');
-
-const client = require('twilio')(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const { DataNotFoundError, NotAuthenticatedError } = require('../utils/error');
 
 exports.signJWT = async ({ id, role, status, citizen_id, phone }) => {
   const user = {
@@ -61,9 +57,7 @@ exports.getAccessToken = async (refresh_token) => {
 exports.genResetToken = async (buffer, user) => {
   const token = buffer.toString('hex');
   if (!user) {
-    const err = new Error('Your phone is incorrect.');
-    err.statusCode = 401;
-    throw err;
+    throw new DataNotFoundError('Your phone is incorrect.');
   }
   user.resetToken = token;
   user.resetTokenExpiration = Date.now() + 3600000;
@@ -77,9 +71,7 @@ exports.resetPassword = async (token, newPassword) => {
     resetTokenExpiration: { $gt: Date.now() },
   });
   if (!user) {
-    const error = new Error('Your reset token is expired or invalid.');
-    error.statusCode = 401;
-    throw error;
+    throw new NotAuthenticatedError('Your reset token is expired or invalid.');
   }
 
   const hashedPassword = await security.hashPassword(newPassword);

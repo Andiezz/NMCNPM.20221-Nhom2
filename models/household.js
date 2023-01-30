@@ -47,7 +47,7 @@ const householdSchema = new Schema(
           type: String,
           required: true,
         },
-      },
+      }
     ],
     move_in: {
       date: {
@@ -88,13 +88,13 @@ householdSchema.pre('save', async function (next) {
     history.address.district = this.address.district;
     history.address.ward = this.address.ward;
     history.address.no = this.address.no;
-    history.members.citizen_id = this.members.citizen_id;
-    history.members.relation = this.members.relation;
+    history.members = this.members;
     history.move_in.date = this.move_in.date;
     history.move_in.reason = this.move_in.reason;
     history.move_out.date = this.move_out.date;
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
+    history.version = this.version;
     await history.save();
   }
   next();

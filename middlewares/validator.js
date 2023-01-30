@@ -301,8 +301,6 @@ exports.updateUserProfile = [
     .withMessage('Education is required')
     .trim()
     .isNumeric(),
-  body('moveInDate').isDate().withMessage('Invalid move in date'),
-  body('moveOutDate').isDate().withMessage('Invalid move out date'),
 ];
 
 exports.updatePassword = [

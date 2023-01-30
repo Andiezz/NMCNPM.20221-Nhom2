@@ -1,7 +1,7 @@
 const Household = require('../models/household');
 const Citizen = require('../models/citizen');
 
-const citizenService = require('../services/citizen')
+const citizenService = require('../services/citizen');
 
 const BadRequestError = require('../errors/bad-request-error');
 const DatabaseConnectionError = require('../errors/database-connection-error');
@@ -71,7 +71,18 @@ exports.updateHousehold = async ({
 };
 
 exports.addMember = async ({ household_id, citizen_id, relation }) => {
+  const citizen = await Citizen.findById(citizen_id);
   const household = await Household.findById(household_id);
+
+  if (citizen.household_id != null) {
+    throw new BadRequestError(
+      'This citizen has already belonged to a household.'
+    );
+  }
+
+  citizen.household_id = household_id;
+
+  const updatedCitizen = await citizen.save();
 
   household.members.push({
     citizen_id: citizen_id,
@@ -80,7 +91,7 @@ exports.addMember = async ({ household_id, citizen_id, relation }) => {
 
   const updatedHousehold = await household.save();
 
-  if (updatedHousehold !== household) {
+  if (updatedHousehold !== household || updatedCitizen != citizen) {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
 
@@ -88,17 +99,24 @@ exports.addMember = async ({ household_id, citizen_id, relation }) => {
 };
 
 exports.removeMember = async ({ household_id, citizen_id }) => {
+  const citizen = await Citizen.findById(citizen_id);
   const household = await Household.findById(household_id);
+
+  if (citizen.household_id == null) {
+    throw new BadRequestError("This citizen has not belonged to any household yet.");
+  }
 
   for (let i = 0; i < household.members.length; i++) {
     if (household.members[i].citizen_id.toString() === citizen_id) {
       household.members.splice(i, 1);
+      citizen.household_id = null;
     }
   }
 
+  const updatedCitizen = await citizen.save();
   const updatedHousehold = await household.save();
 
-  if (updatedHousehold !== household) {
+  if (updatedHousehold !== household || updatedCitizen !== citizen) {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
 
@@ -117,7 +135,7 @@ exports.deleteHouseholdById = async (household_id) => {
     const citizen_id = citizens[i].citizen_id;
     const citizen = await Citizen.findById(citizen_id);
     citizen.household_id = null;
-    await citizen.save()
+    await citizen.save();
   }
 
   return await Household.findByIdAndDelete(household_id);

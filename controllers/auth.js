@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const config = require('config');
 require('dotenv').config();
 
-const { NotAuthenticatedError } = require('../utils/error');
+const { NotAuthenticatedError, DataNotFoundError, BadRequestError } = require('../utils/error');
 
 const authService = require('../services/auth');
 const userService = require('../services/user');
@@ -13,14 +13,12 @@ exports.login = async (req, res, next) => {
   const { phone, password, role } = req.body;
   const check_user = await userService.getUserByPhoneRole({ phone, role });
   if (!check_user) {
-    throw new NotAuthenticatedError('User not found');
+    throw new DataNotFoundError('User not found');
   }
 
   const isEqual = await bcrypt.compare(password, check_user.password);
   if (!isEqual) {
-    const err = new Error('Wrong password.');
-    err.statusCode = 401;
-    throw err;
+    throw new NotAuthenticatedError('Wrong password.');
   }
 
   const { access_token, refresh_token, user } = await authService.signJWT({
@@ -45,9 +43,7 @@ exports.login = async (req, res, next) => {
 exports.generateToken = async (req, res, next) => {
   const { refresh_token } = req.body;
   if (!refresh_token) {
-    const err = new Error('Not authenticated.');
-    err.statusCode = 401;
-    throw err;
+    throw new NotAuthenticatedError('Not authenticated.');
   }
   const access_token = await authService.getAccessToken(refresh_token);
   if (access_token) {
@@ -62,9 +58,7 @@ exports.generateToken = async (req, res, next) => {
   } else {
     req.session = null;
     req.user = null;
-    const err = new Error('Invalid refresh token..');
-    err.statusCode = 401;
-    throw err;
+    throw new BadRequestError('Invalid refresh token.');
   }
 };
 

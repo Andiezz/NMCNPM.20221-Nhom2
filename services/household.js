@@ -1,4 +1,7 @@
 const Household = require('../models/household');
+const Citizen = require('../models/citizen');
+
+const citizenService = require('../services/citizen')
 
 const BadRequestError = require('../errors/bad-request-error');
 const DatabaseConnectionError = require('../errors/database-connection-error');
@@ -107,5 +110,15 @@ exports.houseHoldList = async () => {
 };
 
 exports.deleteHouseholdById = async (household_id) => {
+  const household = await Household.findById(household_id);
+  const citizens = household.members;
+
+  for (let i = 0; i < citizens.length; i++) {
+    const citizen_id = citizens[i].citizen_id;
+    const citizen = await Citizen.findById(citizen_id);
+    citizen.household_id = null;
+    await citizen.save()
+  }
+
   return await Household.findByIdAndDelete(household_id);
 };

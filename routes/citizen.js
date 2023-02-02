@@ -37,7 +37,6 @@ router.delete(
   '/delete/:citizen_id',
   isAuth.authToken, 
   isAuth.authRole(['ADMIN', 'LEADER']),
-  validator.fee_id,
   tryCatch(citizenController.deleteCitizen)
 );
 

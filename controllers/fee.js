@@ -63,12 +63,14 @@ exports.deleteFee = async (req, res) => {
   const result = await feeService.deleteFeeById(fee_id);
 
   if (!result) {
-    return res
-      .status(400)
-      .json({ response_status: 0, message: 'Delete fee fail' });
+    return res.status(400).json({ 
+      response_status: 0, 
+      message: 'Delete fee fail' 
+    });
   }
 
-  res
-    .status(200)
-    .json({ response_status: 1, message: 'Delete fee successfully' });
+  res.status(200).json({ 
+    response_status: 1, 
+    message: 'Delete fee successfully' 
+  });
 };

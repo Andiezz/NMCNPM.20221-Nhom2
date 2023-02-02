@@ -1,9 +1,10 @@
+const User = require('../models/user');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Household = require('../models/household');
 
 const cardIdentityService = require('../services/cartIdentity');
-const householdService = require('../services/household')
+const householdService = require('../services/household');
 
 const { DatabaseConnectionError } = require('../utils/error');
 
@@ -141,14 +142,21 @@ exports.citizenList = async () => {
 
 exports.deleteCitizenById = async (citizen_id) => {
   const citizen = await Citizen.findById(citizen_id);
-  const card_id = citizen.card_id;
-  await CardIdentity.findByIdAndDelete(card_id);
+  await CardIdentity.findOneAndDelete({ citizen_id: citizen_id });
+  await User.findOneAndDelete({ citizen_id: citizen_id });
 
   if (citizen.household_id != null) {
     await householdService.removeMember({
       household_id: citizen.household_id,
-      citizen_id: citizen_id
-    })
+      citizen_id: citizen_id,
+    });
+  }
+
+  const household = await Household.findOne({ owner_id: citizen_id });
+
+  if (household) {
+    household.owner_id = null;
+    await household.save();
   }
 
   return await Citizen.findByIdAndDelete(citizen_id);

@@ -15,6 +15,10 @@ const transactionSchema = new Schema(
       ref: 'Household',
       required: true,
     },
+    year: {
+      type: Number,
+      default: new Date().getFullYear(),
+    },
     cost: {
       type: Number,
       required: true,
@@ -23,21 +27,22 @@ const transactionSchema = new Schema(
       type: Number,
       default: 0,
     },
+    stage: Number,
   },
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-transactionSchema.pre('save', async function (next) {
-  if (this.version != null) {
-    const history = new Transaction_History();
-    history.fee_id = this.fee_id;
-    history.household_id = this.household_id;
-    history.cost = this.cost;
-    history.status = this.status;
-    history.version = this.version;
-    await history.save();
-  }
-  next();
-});
+// transactionSchema.pre('save', async function (next) {
+//   if (this.version != null) {
+//     const history = new Transaction_History();
+//     history.fee_id = this.fee_id;
+//     history.household_id = this.household_id;
+//     history.cost = this.cost;
+//     history.status = this.status;
+//     history.version = this.version + 1;
+//     await history.save();
+//   }
+//   next();
+// });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

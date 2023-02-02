@@ -14,7 +14,7 @@ exports.adminInit = async () => {
     const hashedDefaultPassword = await security.hashPassword(
       config.get('default.password')
     );
-    await User.deleteMany({ role: 'admin' });
+    await User.deleteMany({ role: 'ADMIN' });
     let admin = await User.create({
       role: 'ADMIN',
       citizen_id: mongoose.Types.ObjectId('123456789101112131415161'),

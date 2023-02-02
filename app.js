@@ -13,9 +13,10 @@ mongoose.set('strictQuery', true);
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
-const feeRoutes = require('./routes/fee');
 const citizenRoutes = require('./routes/citizen');
-const householdRoutes = require("./routes/household");
+const householdRoutes = require('./routes/household');
+const feeRoutes = require('./routes/fee');
+const transactionRoutes = require('./routes/transaction');
 
 const app = express();
 
@@ -38,9 +39,10 @@ app.use(
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-app.use('/fee', feeRoutes);
 app.use('/citizen', citizenRoutes);
 app.use('/household', householdRoutes);
+app.use('/fee', feeRoutes);
+app.use('/transaction', transactionRoutes);
 
 // ==================== Errors Handler =====================
 app.all('*', (req, res, next) => {
@@ -49,11 +51,11 @@ app.all('*', (req, res, next) => {
 app.use(errorHandler);
 
 mongoose
-	.connect(process.env.MONGO_DATABASE)
-	.then(() => {
-		app.listen(3000);
-		console.log('============ Database Connected ============');
-	})
-	.catch((err) => {
-		console.log(err);
-	});
+  .connect(process.env.MONGO_DATABASE)
+  .then(() => {
+    app.listen(3000);
+    console.log('============ Database Connected ============');
+  })
+  .catch((err) => {
+    console.log(err);
+  });

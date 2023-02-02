@@ -15,6 +15,13 @@ router.get(
   tryCatch(feeController.feeList)
 );
 
+router.get(
+  '/donation',
+  authToken,
+  authRole(['ACCOUNTANT']),
+  tryCatch(feeController.donationList)
+);
+
 router.post(
   '/create',
   authToken,

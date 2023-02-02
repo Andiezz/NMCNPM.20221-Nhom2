@@ -10,6 +10,15 @@ exports.feeList = async (req, res) => {
   });
 };
 
+exports.donationList = async (req, res) => {
+  const donation_list = await feeService.donationList();
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched all donations',
+    data: { list: donation_list },
+  });
+};
+
 exports.createFee = async (req, res) => {
   const { name, required, memberPayment } = req.body;
   const newFee = await feeService.createFee({ name, required, memberPayment });

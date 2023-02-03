@@ -596,3 +596,17 @@ exports.transaction_id = [
     })
     .withMessage('Transaction not found'),
 ];
+
+exports.year = [
+  body('year')
+    .exists()
+    .withMessage('Year cant be null')
+    .isInt()
+    .custom((value, { req }) => {
+      if (value < 0) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage('Year must be positive'),
+];

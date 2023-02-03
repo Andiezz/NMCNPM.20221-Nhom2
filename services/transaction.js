@@ -54,6 +54,10 @@ exports.getAllTransactionByHouseHold = async (household_id) => {
   return list;
 };
 
+exports.transaction_info = async (transaction_id) => {
+  return await Transaction.findById(transaction_id);
+};
+
 exports.createTransaction = async (fee_id) => {
   const household_list = await Household.find();
   const check_fee = await Fee.findById(fee_id);
@@ -127,23 +131,41 @@ exports.newYearTransaction = async () => {
   return;
 };
 
-exports.totalDonation = async () => {
-  const totalDonation = await Transaction.aggregate([
+exports.statisticDonation = async (year) => {
+  return await Transaction.aggregate([
     {
       $match: {
         cost: { $eq: 0 },
+        year: year,
       },
     },
     {
       $group: {
-        _id: '$stage',
+        _id: { stage: '$stage', fee_id: '$fee_id' },
         total: { $sum: '$status' },
       },
     },
     {
       $project: {
         _id: 0,
-        stage: '$_id',
+        donation_info: '$_id',
+        total: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: 'fees',
+        localField: 'donation_info.fee_id',
+        foreignField: '_id',
+        as: 'fee',
+      },
+    },
+    { $unwind: { path: '$fee' } },
+    {
+      $project: {
+        _id: 0,
+        stage: '$donation_info.stage',
+        fee: 1,
         total: 1,
       },
     },
@@ -151,5 +173,99 @@ exports.totalDonation = async () => {
       $sort: { stage: 1 },
     },
   ]);
-  return totalDonation;
+};
+
+exports.statisticFee = async (year) => {
+  return await Transaction.aggregate([
+    {
+      $match: {
+        cost: { $ne: 0 },
+        year: year,
+      },
+    },
+    {
+      $group: {
+        _id: '$fee_id',
+        total: { $sum: '$status' },
+        unpaid_household: {
+          $push: {
+            $cond: [{ $eq: ['$status', 0] }, '$household_id', null],
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        fee: '$_id',
+        total: 1,
+        unpaid_household: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: 'fees',
+        localField: 'fee',
+        foreignField: '_id',
+        as: 'fee',
+      },
+    },
+    { $unwind: { path: '$fee' } },
+    // {
+    //   $lookup: {
+    //     from: 'households',
+    //     localField: 'unpaid_household',
+    //     foreignField: '_id',
+    //     as: 'unpaid_household',
+    //   },
+    // },
+    {
+      $sort: { total: -1 },
+    },
+  ]);
+};
+
+exports.total = async (year) => {
+  const total_fee = await Transaction.aggregate([
+    {
+      $match: {
+        year: year,
+        cost: { $ne: 0 },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$status' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        total: 1,
+      },
+    },
+  ]);
+
+  const total_donation = await Transaction.aggregate([
+    {
+      $match: {
+        year: year,
+        cost: { $eq: 0 },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$status' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        total: 1,
+      },
+    },
+  ]);
+  return { total_fee, total_donation };
 };

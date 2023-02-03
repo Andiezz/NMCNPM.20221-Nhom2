@@ -29,7 +29,7 @@ const transactionSchema = new Schema(
     },
     stage: Number,
   },
-  { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
+  { timestamps: true, versionKey: false }
 );
 
 // transactionSchema.pre('save', async function (next) {

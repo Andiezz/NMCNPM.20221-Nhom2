@@ -7,8 +7,21 @@ exports.transactionList = async (req, res) => {
 
   res.status(200).json({
     response_status: 1,
-    message: 'Fetched all transaction',
+    message: 'Fetched all transaction successfully',
     data: { transaction_list },
+  });
+};
+
+exports.transactionDetail = async (req, res) => {
+  const transaction_id = req.params.transaction_id;
+  const transaction_info = await transactionService.transaction_info(
+    transaction_id
+  );
+
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched transaction detail successfully',
+    data: { transaction_info },
   });
 };
 
@@ -64,11 +77,36 @@ exports.newYearTransaction = async (req, res) => {
   });
 };
 
-exports.totalDonation = async (req, res) => {
-  const total_donation = await transactionService.totalDonation();
+exports.statisticDonation = async (req, res) => {
+  const { year } = req.body;
+  const total_donation = await transactionService.statisticDonation(year);
   res.status(200).json({
     response_status: 1,
     message: 'Fetched total donation successfully',
     data: { total_donation },
+  });
+};
+
+exports.statisticFee = async (req, res) => {
+  const { year } = req.body;
+  const statistic = await transactionService.statisticFee(year);
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched statistic successfully',
+    data: { statistic },
+  });
+};
+
+exports.total = async (req, res) => {
+  const { year } = req.body;
+  const { total_fee, total_donation } = await transactionService.total(year);
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched total fee & donation  successfully',
+    data: {
+      total_fee: total_fee[0].total,
+      total_donation: total_donation[0].total,
+      sum: total_fee[0].total + total_donation[0].total,
+    },
   });
 };

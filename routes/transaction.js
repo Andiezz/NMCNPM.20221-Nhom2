@@ -15,6 +15,14 @@ router.get(
   tryCatch(transactionController.transactionList)
 );
 
+router.get(
+  '/details/:transaction_id',
+  authToken,
+  authRole(['ACCOUNTANT']),
+  validator.transaction_id,
+  tryCatch(transactionController.transactionDetail)
+);
+
 router.post(
   '/donate/:household_id',
   authToken,
@@ -47,10 +55,27 @@ router.post(
 );
 
 router.get(
-  '/total-donation',
+  '/statistic-donation',
   authToken,
   authRole(['ACCOUNTANT']),
-  tryCatch(transactionController.totalDonation)
+  validator.year,
+  tryCatch(transactionController.statisticDonation)
+);
+
+router.get(
+  '/statistic-fee',
+  authToken,
+  authRole(['ACCOUNTANT']),
+  validator.year,
+  tryCatch(transactionController.statisticFee)
+);
+
+router.get(
+  '/total',
+  authToken,
+  authRole(['ACCOUNTANT']),
+  validator.year,
+  tryCatch(transactionController.total)
 );
 
 module.exports = router;

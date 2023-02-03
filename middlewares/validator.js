@@ -4,6 +4,7 @@ const User = require('../models/user');
 const Fee = require('../models/fee');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
+const Transaction = require('../models/transaction');
 
 exports.login = [
   body('phone')
@@ -557,4 +558,41 @@ exports.fee_id = [
       return true;
     })
     .withMessage('Fee not found'),
+];
+
+exports.donate = [
+  body('amount')
+    .exists()
+    .withMessage('Amount cant be null')
+    .isInt()
+    .custom((value, { req }) => {
+      if (value < 0) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage('Amount must be positive'),
+  body('stage')
+    .exists()
+    .withMessage('Stage cant be null')
+    .isInt()
+    .custom((value, { req }) => {
+      if (value < 0) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage('Stage must be positive'),
+];
+
+exports.transaction_id = [
+  param('transaction_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Transaction.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Transaction not found'),
 ];

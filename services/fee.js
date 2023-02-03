@@ -1,9 +1,18 @@
 const { BadRequestError } = require('../utils/error');
 
 const Fee = require('../models/fee');
+const Transaction = require('../models/transaction');
+const Household = require('../models/household');
 
 exports.feeList = async () => {
-  return await Fee.find();
+  let list = {};
+  list.fee = await Fee.find({ required: { $ne: 0 } });
+  list.donation = await Fee.find({ required: { $eq: 0 } });
+  return list;
+};
+
+exports.donationList = async () => {
+  return await Fee.find({ required: { $eq: 0 } });
 };
 
 exports.createFee = async ({ name, required, memberPayment }) => {
@@ -20,6 +29,20 @@ exports.updateFee = async ({ name, required, memberPayment, fee_id }) => {
   if (check_name && check_fee.name != name) {
     throw new BadRequestError("Fee's name already exist");
   }
+  const transaction_list = await Transaction.find({ fee_id });
+
+  for (i = 0; i < transaction_list.length; i++) {
+    let total = 12 * required;
+    if (memberPayment) {
+      const check_household = await Household.findById(
+        transaction_list[i].household_id
+      );
+      total *= check_household.members.length;
+    }
+
+    transaction_list[i].cost = total;
+    await transaction_list[i].save();
+  }
 
   check_fee.name = name;
   check_fee.required = required;
@@ -28,5 +51,6 @@ exports.updateFee = async ({ name, required, memberPayment, fee_id }) => {
 };
 
 exports.deleteFeeById = async (fee_id) => {
+  await Transaction.deleteMany({ fee_id });
   return await Fee.findByIdAndDelete(fee_id);
 };

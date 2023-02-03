@@ -1,13 +1,7 @@
-const absenceService = require("../services/absence")
+const absenceService = require('../services/absence');
 
 exports.createAbsence = async (req, res, next) => {
-  const {
-    citizen_id,
-    code,
-    place,
-    date,
-    reason
-  } = req.body;
+  const { citizen_id, code, place, date, reason } = req.body;
 
   const absence = await absenceService.createAbsence({
     citizen_id: citizen_id,
@@ -15,8 +9,8 @@ exports.createAbsence = async (req, res, next) => {
     place: place,
     date: date,
     reason: reason,
-    modifiedBy: req.user.userId,
-  })
+    modifiedBy: req.user._id,
+  });
 
   res.status(200).json({
     responseStatus: 1,
@@ -25,7 +19,7 @@ exports.createAbsence = async (req, res, next) => {
       absence: absence,
     },
   });
-}
+};
 
 exports.getAbsence = async (req, res, next) => {
   const absenceId = req.params.absenceId;
@@ -43,13 +37,45 @@ exports.getAbsence = async (req, res, next) => {
 };
 
 exports.updateAbsence = async (req, res, next) => {
-  const {
-    citizen_id,
-    code,
-    place,
-    date,
-    reason
-  } = req.body;
+  const { code, place, date, reason } = req.body;
 
   const absenceId = req.params.absenceId;
-}
+
+  const updatedAbsence = await absenceService.updateAbsence({
+    absence_id: absenceId,
+    code: code,
+    place: place,
+    date: date,
+    reason: reason,
+    modifiedBy: req.user._id,
+  });
+
+  res.status(200).json({
+    responseStatus: 1,
+    message: 'Absence updated!',
+    data: {
+      updatedAbsence: updatedAbsence,
+    },
+  });
+};
+
+exports.absenceList = async (req, res, next) => {
+  const list = await absenceService.getAllAbsence();
+  res.status(200).json({
+    responseStatus: 1,
+    message: 'All absences fetched!',
+    data: {
+      list: list,
+    },
+  });
+};
+
+exports.deleteAbsence = async (req, res, next) => {
+  const absenceId = req.params.absenceId;
+  await absenceService.deleteAbsence({ absenceId: absenceId });
+
+  res.status(200).json({
+    responseStatus: 1,
+    message: 'Absence deleted!',
+  });
+};

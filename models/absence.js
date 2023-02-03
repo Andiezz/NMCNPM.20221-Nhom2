@@ -6,6 +6,7 @@ const absenceSchema = new Schema({
   citizen_id: {
     type: mongoose.Types.ObjectId,
     required: true,
+    ref: "Citizen"
   },
   code: {
     type: String,
@@ -32,6 +33,7 @@ const absenceSchema = new Schema({
   modifiedBy: {
     type: mongoose.Types.ObjectId,
     required: true,
+    ref: 'User'
   },
 });
 

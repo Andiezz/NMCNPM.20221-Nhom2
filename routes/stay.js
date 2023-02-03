@@ -1,11 +1,11 @@
 const express = require('express')
 
 const isAuth = require('../middlewares/is-auth');
-const absenceController = require('../controllers/absence');
+const stayController = require('../controllers/stay');
 const validator = require('../middlewares/validator');
 
 const { tryCatch } = require('../middlewares/errorHandler');
-const absence = require('../models/absence');
+const stay = require('../models/stay');
 
 const router = express.Router();
 
@@ -13,35 +13,35 @@ router.post(
   '/create',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.createAbsence)
+  tryCatch(stayController.createStay)
 )
 
 router.get(
-  '/get/:absenceId',
+  '/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.getAbsence)
+  tryCatch(stayController.getStay)
 )
 
 router.patch(
-  '/update/:absenceId',
+  '/update/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.updateAbsence)
+  tryCatch(stayController.updateStay)
 )
 
 router.get(
   '/list',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.absenceList)
+  tryCatch(stayController.stayList)
 )
 
 router.delete(
-  '/delete/:absenceId',
+  'delete/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.deleteAbsence)
+  tryCatch(stayController.deleteStay)
 )
 
 module.exports = router;

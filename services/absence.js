@@ -28,3 +28,33 @@ exports.createAbsence = async ({
 exports.getAbsenceById = async (absence_id) => {
   return await Absence.findById(absence_id);
 };
+
+exports.updateAbsence = async ({
+  absence_id,
+  code,
+  place,
+  date,
+  reason,
+  modifiedBy
+}) => {
+  const absence = await Absence.findById(absence_id)
+
+  absence.code = code
+  absence.place = place
+  absence.date = date
+  absence.reason = reason
+  absence.modifiedBy = modifiedBy
+
+  return await absence.save();
+};
+
+exports.getAllAbsence = async () => {
+  const list = await Absence.find();
+  return list;
+}
+
+exports.deleteAbsence = async ({
+  absence_id
+}) => {
+  return await Absence.findByIdAndDelete(absence_id);
+}

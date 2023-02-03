@@ -1,11 +1,11 @@
 const express = require('express')
 
 const isAuth = require('../middlewares/is-auth');
-const absenceController = require('../controllers/absence');
+const deathController = require('../controllers/death');
 const validator = require('../middlewares/validator');
 
 const { tryCatch } = require('../middlewares/errorHandler');
-const absence = require('../models/absence');
+const death = require('../models/death');
 
 const router = express.Router();
 
@@ -13,35 +13,35 @@ router.post(
   '/create',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.createAbsence)
+  tryCatch(deathController.createDeath)
 )
 
 router.get(
-  '/get/:absenceId',
+  '/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.getAbsence)
+  tryCatch(deathController.getDeath)
 )
 
 router.patch(
-  '/update/:absenceId',
+  '/update/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.updateAbsence)
+  tryCatch(deathController.updateDeath)
 )
 
 router.get(
   '/list',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.absenceList)
+  tryCatch(deathController.deathList)
 )
 
 router.delete(
-  '/delete/:absenceId',
+  'delete/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
-  tryCatch(absenceController.deleteAbsence)
+  tryCatch(deathController.deleteDeath)
 )
 
 module.exports = router;

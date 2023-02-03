@@ -15,6 +15,9 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const citizenRoutes = require('./routes/citizen');
 const householdRoutes = require('./routes/household');
+const absenceRoutes = require('./routes/absence');
+const stayRoutes = require('./routes/stay');
+const deathRoutes = require('./routes/death');
 const feeRoutes = require('./routes/fee');
 const transactionRoutes = require('./routes/transaction');
 
@@ -41,6 +44,9 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/citizen', citizenRoutes);
 app.use('/household', householdRoutes);
+app.use('/absence', absenceRoutes);
+app.use('/stay', stayRoutes);
+app.use('/death', deathRoutes);
 app.use('/fee', feeRoutes);
 app.use('/transaction', transactionRoutes);
 

@@ -16,6 +16,14 @@ router.get(
 );
 
 router.get(
+  '/details/:fee_id',
+  authToken,
+  authRole(['ACCOUNTANT']),
+  validator.fee_id,
+  tryCatch(feeController.feeDetails)
+);
+
+router.get(
   '/donation',
   authToken,
   authRole(['ACCOUNTANT']),

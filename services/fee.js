@@ -11,6 +11,10 @@ exports.feeList = async () => {
   return list;
 };
 
+exports.feeDetails = async (fee_id) => {
+  return await Fee.findById(fee_id);
+};
+
 exports.donationList = async () => {
   return await Fee.find({ required: { $eq: 0 } });
 };

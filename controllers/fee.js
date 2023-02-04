@@ -5,8 +5,19 @@ exports.feeList = async (req, res) => {
   const list = await feeService.feeList();
   res.status(200).json({
     response_status: 1,
-    message: 'Fetched all fees',
+    message: 'Fetched all fees successfully',
     data: { list: list },
+  });
+};
+
+exports.feeDetails = async (req, res) => {
+  const fee_id = req.params.fee_id;
+  const fee_info = await feeService.feeDetails(fee_id);
+
+  res.status(200).json({
+    response_status: 1,
+    message: 'Fetched fee details successfully',
+    data: { fee_info },
   });
 };
 
@@ -14,7 +25,7 @@ exports.donationList = async (req, res) => {
   const donation_list = await feeService.donationList();
   res.status(200).json({
     response_status: 1,
-    message: 'Fetched all donations',
+    message: 'Fetched all donations successfully',
     data: { list: donation_list },
   });
 };
@@ -63,14 +74,14 @@ exports.deleteFee = async (req, res) => {
   const result = await feeService.deleteFeeById(fee_id);
 
   if (!result) {
-    return res.status(400).json({ 
-      response_status: 0, 
-      message: 'Delete fee fail' 
+    return res.status(400).json({
+      response_status: 0,
+      message: 'Delete fee fail',
     });
   }
 
-  res.status(200).json({ 
-    response_status: 1, 
-    message: 'Delete fee successfully' 
+  res.status(200).json({
+    response_status: 1,
+    message: 'Delete fee successfully',
   });
 };

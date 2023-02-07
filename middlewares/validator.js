@@ -174,16 +174,6 @@ exports.register = [
     .withMessage('Education is required')
     .trim()
     .isNumeric(),
-  body('moveInDate')
-    .exists()
-    .withMessage('Move in date is required')
-    .isDate()
-    .withMessage('Invalid move in date'),
-  body('moveOutDate')
-    .exists()
-    .withMessage('Move out date is required')
-    .isDate()
-    .withMessage('Invalid move out date'),
 ];
 
 exports.updateUserProfile = [

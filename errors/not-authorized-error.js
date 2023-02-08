@@ -1,4 +1,4 @@
-const CustomError = require("./custom-error.js");
+const CustomError = require('./custom-error.js');
 
 class NotAuthorizedError extends CustomError {
   statusCode = 403;
@@ -9,7 +9,7 @@ class NotAuthorizedError extends CustomError {
 
   serializeErrors() {
     return {
-      response_code: this.responseCode,
+      response_status: this.responseCode,
       error: [{ message: this.message }],
     };
   }

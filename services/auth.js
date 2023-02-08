@@ -35,6 +35,10 @@ exports.getAccessToken = async (refresh_token) => {
   const checkRT = User.exists({ refresh_token: refresh_token });
   if (checkRT) {
     const user_info = await User.findOne({ refresh_token: refresh_token });
+
+    if (!user_info) {
+      throw new DataNotFoundError('User not found');
+    }
     const user = {
       _id: user_info._id,
       role: user_info.role,

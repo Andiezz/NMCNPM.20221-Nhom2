@@ -1,4 +1,4 @@
-const CustomError = require("./custom-error.js");
+const CustomError = require('./custom-error.js');
 
 class NotAuthenticatedError extends CustomError {
   statusCode = 401;
@@ -9,7 +9,7 @@ class NotAuthenticatedError extends CustomError {
 
   serializeErrors() {
     return {
-      response_code: this.responseCode,
+      response_status: this.responseCode,
       error: [{ message: this.message }],
     };
   }

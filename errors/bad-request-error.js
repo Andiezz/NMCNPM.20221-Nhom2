@@ -1,4 +1,4 @@
-const CustomError = require("./custom-error.js");
+const CustomError = require('./custom-error.js');
 
 class BadRequestError extends CustomError {
   statusCode = 400;
@@ -9,7 +9,7 @@ class BadRequestError extends CustomError {
 
   serializeErrors() {
     return {
-      response_code: this.responseCode,
+      response_status: this.responseCode,
       error: [{ message: this.message }],
     };
   }

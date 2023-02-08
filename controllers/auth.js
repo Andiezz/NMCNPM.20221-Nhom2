@@ -3,7 +3,11 @@ const crypto = require('crypto');
 const config = require('config');
 require('dotenv').config();
 
-const { NotAuthenticatedError, DataNotFoundError, BadRequestError } = require('../utils/error');
+const {
+  NotAuthenticatedError,
+  DataNotFoundError,
+  BadRequestError,
+} = require('../utils/error');
 
 const authService = require('../services/auth');
 const userService = require('../services/user');
@@ -51,9 +55,6 @@ exports.generateToken = async (req, res, next) => {
     return res.status(200).json({
       response_status: 1,
       message: 'Refresh token successfully!',
-      data: {
-        access_token,
-      },
     });
   } else {
     req.session = null;

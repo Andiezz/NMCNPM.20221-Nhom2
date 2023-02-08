@@ -90,13 +90,12 @@ exports.register = async (req, res, next) => {
 };
 
 exports.createUser = async (req, res, next) => {
-  const { role, phone, password, citizen_id } = req.body;
+  const { role, phone, password } = req.body;
 
   const user = await userService.createNewUser({
     role: role,
     phone: phone,
     password: password,
-    citizen_id: citizen_id,
   });
 
   res.status(200).json({

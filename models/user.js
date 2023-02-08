@@ -36,16 +36,22 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-userSchema.pre('save', async function preSaveFunction(next) {
-  const history = new UserHistory();
-  history.role = this.role;
-  history.status = this.status;
-  history.citizen_id = this.citizen_id;
-  history.phone = this.phone;
-  if (this.version == null) {
-    history.version = 0;
+userSchema.pre('save', async function (next) {
+  if (this.version != null) {
+    const history = new UserHistory();
+    history.role = this.role;
+    history.status = this.status;
+    history.citizen_id = this.citizen_id;
+    history.phone = this.phone;
+    history.version = this.version + 1;
+    await history.save();
   } else {
-    history.version = this.version + 1
+    const history = new UserHistory();
+    history.role = this.role;
+    history.status = this.status;
+    history.citizen_id = this.citizen_id;
+    history.phone = this.phone;
+    history.version = 0;
   }
   await history.save();
   next();

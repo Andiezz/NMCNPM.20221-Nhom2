@@ -12,8 +12,7 @@ router.post(
   '/register',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
-  validator.register,
-  tryCatch(userController.register)
+  tryCatch(userController.createUser)
 );
 
 router.get(

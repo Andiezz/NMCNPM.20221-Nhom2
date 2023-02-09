@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 
-const Card_Identity_History = require('./cartIdentityHistory');
-
 const Schema = mongoose.Schema;
 
-const cardIdentitySchema = new Schema(
+const cardIdentityHistorySchema = new Schema(
   {
     card_id: {
       type: String,
@@ -27,11 +25,7 @@ const cardIdentitySchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
+  { timestamps: true, versionKey: false }
 );
 
-cardIdentitySchema.pre('save', async function (next) => {
-  
-})
-
-module.exports = mongoose.model('Card_Identity', cardIdentitySchema);
+module.exports = mongoose.model('Card_Identity_History', cardIdentityHistorySchema);

@@ -79,8 +79,8 @@ const householdSchema = new Schema(
 );
 
 householdSchema.pre('save', async function (next) {
+  const history = new HouseholdHistory();
   if (this.version != null) {
-    const history = new HouseholdHistory();
     history.household_id = this.household_id;
     history.owner_id = this.owner_id;
     history.areaCode = this.areaCode;
@@ -95,8 +95,23 @@ householdSchema.pre('save', async function (next) {
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
     history.version = this.version;
-    await history.save();
+  } else {
+    history.household_id = this.household_id;
+    history.owner_id = this.owner_id;
+    history.areaCode = this.areaCode;
+    history.address.province = this.address.province;
+    history.address.district = this.address.district;
+    history.address.ward = this.address.ward;
+    history.address.no = this.address.no;
+    history.members = this.members;
+    history.move_in.date = this.move_in.date;
+    history.move_in.reason = this.move_in.reason;
+    history.move_out.date = this.move_out.date;
+    history.move_out.reason = this.move_out.reason;
+    history.modifiedBy = this.modifiedBy;
+    history.version = this.version;
   }
+  await history.save();
   next();
 });
 

@@ -59,7 +59,7 @@ app.use(errorHandler);
 mongoose
   .connect(process.env.MONGO_DATABASE)
   .then(() => {
-    app.listen(3000);
+    app.listen(5000);
     console.log('============ Database Connected ============');
   })
   .catch((err) => {

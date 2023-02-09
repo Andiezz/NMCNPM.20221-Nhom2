@@ -1,6 +1,6 @@
 const CardIdentity = require('../models/cardIdentity');
 
-const { DatabaseConnectionError } = require("../utils/error")
+const { DatabaseConnectionError } = require('../utils/error');
 
 exports.createCardIdentity = async ({
   citizen_id,
@@ -17,7 +17,7 @@ exports.createCardIdentity = async ({
     expiration: expiration,
   });
 
-  const newCardIdentity = await cardIdentity.save()
+  const newCardIdentity = await cardIdentity.save();
 
   if (newCardIdentity !== cardIdentity) {
     const err = new Error('Failed to connect with database.');
@@ -32,22 +32,31 @@ exports.updateCardIdentity = async ({
   card_id,
   location,
   date,
-  expiration
+  expiration,
+  citizen_id,
 }) => {
-  const updatedCardId = await CardIdentity.findOne({
-		card_id: card_id,
-	});
+  let updatedCardId = await CardIdentity.findOne({
+    card_id: card_id,
+  });
 
-  updatedCardId.card_id = card_id;
-	updatedCardId.location = location;
-	updatedCardId.date = date;
-  updatedCardId.expiration = expiration;
+  if (updatedCardId) {
+    updatedCardId.card_id = card_id;
+    updatedCardId.location = location;
+    updatedCardId.date = date;
+    updatedCardId.expiration = expiration;
+  } else {
+    updatedCardId = await CardIdentity.findOne({ citizen_id: citizen_id })
+    updatedCardId.card_id = card_id;
+    updatedCardId.location = location;
+    updatedCardId.date = date;
+    updatedCardId.expiration = expiration;
+  }
 
   const savedCardId = await updatedCardId.save();
 
   if (savedCardId !== updatedCardId) {
-		throw new DatabaseConnectionError('Failed to connect with database.');
-	}
+    throw new DatabaseConnectionError('Failed to connect with database.');
+  }
 
   return savedCardId;
-}
+};

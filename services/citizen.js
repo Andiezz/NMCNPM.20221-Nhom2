@@ -131,6 +131,7 @@ exports.updateCitizen = async ({
     location: location,
     date: date,
     expiration: expiration,
+    citizen_id: citizen_id
   });
 
   return { savedCardId: savedCardId, savedCitizen: savedCitizen };

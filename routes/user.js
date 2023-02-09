@@ -12,7 +12,7 @@ router.post(
   '/create_user',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
-  validator.createUser,
+  validator.userInfo,
   tryCatch(userController.createUser)
 );
 
@@ -25,7 +25,7 @@ router.get(
 router.patch(
   '/update_profile/:userId',
   isAuth.authToken,
-  validator.updateUserProfile,
+  validator.userInfo,
   tryCatch(userController.updateUser)
 );
 

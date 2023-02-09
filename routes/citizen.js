@@ -12,7 +12,7 @@ router.post(
   '/create',
   authToken,
   authRole(['ADMIN', 'LEADER']),
-  validator.createCitizen,
+  validator.citizenInfo,
   tryCatch(citizenController.createCitizen)
 );
 
@@ -20,6 +20,7 @@ router.get(
   '/profile/:citizen_id',
   authToken,
   authRole(['ADMIN', 'LEADER']),
+  validator.citizen_id,
   tryCatch(citizenController.getCitizen)
 );
 
@@ -27,7 +28,7 @@ router.patch(
   '/update_profile/:citizen_id',
   authToken,
   authRole(['ADMIN', 'LEADER']),
-  validator.updateCitizenProfile,
+  validator.validator.citizenInfo,
   tryCatch(citizenController.updateCitizen)
 );
 
@@ -42,6 +43,7 @@ router.delete(
   '/delete/:citizen_id',
   authToken,
   authRole(['ADMIN', 'LEADER']),
+  validator.citizen_id,
   tryCatch(citizenController.deleteCitizen)
 );
 

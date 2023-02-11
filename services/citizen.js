@@ -6,7 +6,10 @@ const Household = require('../models/household');
 const cardIdentityService = require('../services/cartIdentity');
 const householdService = require('../services/household');
 
-const { DatabaseConnectionError } = require('../utils/error');
+const {
+  DatabaseConnectionError,
+  RequestValidationError,
+} = require('../utils/error');
 
 exports.getCitizenById = async ({ card_id, passport_id }) => {
   const citizen = await Citizen.findOne({
@@ -38,6 +41,16 @@ exports.createCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
+  let isExist = await CardIdentity.exists({ card_id: value });
+  if (isExist) {
+    throw new RequestValidationError('Card Identity has already existed.');
+  }
+
+  isExist = await Citizen.exists({ passport_id: value });
+  if (isExist) {
+    throw new RequestValidationError('Passport id has already existed.');
+  }
+
   const citizen = new Citizen({
     card_id: card_id,
     passport_id: passport_id,
@@ -98,6 +111,18 @@ exports.updateCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
+  const card_identity = await CardIdentity.findOne({ card_id: value });
+
+  if (card_identity && card_identity.citizen_id.toString() !== citizen_id) {
+    throw new RequestValidationError('Card identity exists already, please pick a different one!');
+  }
+
+  const check_citizen = await Citizen.findOne({ passport_id: passport_id })
+
+  if (check_citizen && check_citizen.citizen_id.toString() !== citizen_id) {
+    throw new RequestValidationError('Card identity exists already, please pick a different one!');
+  }
+
   const updatedCitizen = await Citizen.findById(citizen_id);
 
   updatedCitizen.passport_id = passport_id;
@@ -131,6 +156,7 @@ exports.updateCitizen = async ({
     location: location,
     date: date,
     expiration: expiration,
+    citizen_id: citizen_id,
   });
 
   return { savedCardId: savedCardId, savedCitizen: savedCitizen };

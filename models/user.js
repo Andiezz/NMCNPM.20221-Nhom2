@@ -15,11 +15,6 @@ const userSchema = new Schema(
       required: true,
       default: 1,
     },
-    citizen_id: {
-      type: Schema.Types.ObjectId,
-      ref: 'Citizen',
-      required: true,
-    },
     phone: {
       type: String,
       required: true,
@@ -37,19 +32,16 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', async function (next) {
+  const history = new UserHistory();
   if (this.version != null) {
-    const history = new UserHistory();
     history.role = this.role;
     history.status = this.status;
-    history.citizen_id = this.citizen_id;
     history.phone = this.phone;
     history.version = this.version + 1;
     await history.save();
   } else {
-    const history = new UserHistory();
     history.role = this.role;
     history.status = this.status;
-    history.citizen_id = this.citizen_id;
     history.phone = this.phone;
     history.version = 0;
   }

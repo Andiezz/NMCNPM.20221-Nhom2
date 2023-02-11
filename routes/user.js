@@ -9,22 +9,23 @@ const { tryCatch } = require('../middlewares/errorHandler');
 const router = express.Router();
 
 router.post(
-  '/register',
+  '/create_user',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
+  validator.userInfo,
   tryCatch(userController.createUser)
 );
 
 router.get(
-  '/profile/:userId',
+  '/details/:userId',
   isAuth.authToken,
   tryCatch(userController.getUser)
 );
 
 router.patch(
-  '/profile/:userId',
+  '/update_profile/:userId',
   isAuth.authToken,
-  validator.updateUserProfile,
+  validator.userInfo,
   tryCatch(userController.updateUser)
 );
 

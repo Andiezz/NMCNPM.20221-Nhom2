@@ -59,7 +59,8 @@ app.use(errorHandler);
 mongoose
   .connect(process.env.MONGO_DATABASE)
   .then(() => {
-    app.listen(5000);
+    app.listen(process.env.PORT);
+    console.log('\nServer is running on port ' + process.env.PORT);
     console.log('============ Database Connected ============');
   })
   .catch((err) => {

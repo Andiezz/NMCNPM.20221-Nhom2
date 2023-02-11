@@ -30,8 +30,8 @@ const cardIdentitySchema = new Schema(
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-cardIdentitySchema.pre('save', async function (next) => {
-  
-})
+// cardIdentitySchema.pre('save', async function (next) => {
+
+// })
 
 module.exports = mongoose.model('Card_Identity', cardIdentitySchema);

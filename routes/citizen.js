@@ -28,7 +28,7 @@ router.patch(
   '/update_profile/:citizen_id',
   authToken,
   authRole(['ADMIN', 'LEADER']),
-  validator.validator.citizenInfo,
+  validator.citizenInfo,
   tryCatch(citizenController.updateCitizen)
 );
 

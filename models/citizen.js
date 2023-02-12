@@ -93,6 +93,10 @@ const citizenSchema = new Schema(
       required: false,
       ref: 'User',
     },
+    index: {
+      type: String,
+      required: false
+    }
   },
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );

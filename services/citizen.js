@@ -74,6 +74,7 @@ exports.createCitizen = async ({
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
     modifiedBy: modifiedBy,
+    index: card_id + firstName + lastName,
   });
 
   const newCitizen = await citizen.save();
@@ -114,13 +115,17 @@ exports.updateCitizen = async ({
   const card_identity = await CardIdentity.findOne({ card_id: value });
 
   if (card_identity && card_identity.citizen_id.toString() !== citizen_id) {
-    throw new RequestValidationError('Card identity exists already, please pick a different one!');
+    throw new RequestValidationError(
+      'Card identity exists already, please pick a different one!'
+    );
   }
 
-  const check_citizen = await Citizen.findOne({ passport_id: passport_id })
+  const check_citizen = await Citizen.findOne({ passport_id: passport_id });
 
   if (check_citizen && check_citizen.citizen_id.toString() !== citizen_id) {
-    throw new RequestValidationError('Card identity exists already, please pick a different one!');
+    throw new RequestValidationError(
+      'Card identity exists already, please pick a different one!'
+    );
   }
 
   const updatedCitizen = await Citizen.findById(citizen_id);
@@ -144,6 +149,7 @@ exports.updateCitizen = async ({
   updatedCitizen.moveOut.date = moveOutDate;
   updatedCitizen.moveOut.reason = moveOutReason;
   updatedCitizen.modifiedBy = modifiedBy;
+  updatedCitizen.index = card_id + firstName + lastName;
 
   const savedCitizen = await updatedCitizen.save();
 
@@ -165,6 +171,10 @@ exports.updateCitizen = async ({
 exports.citizenList = async () => {
   return await Citizen.find();
 };
+
+exports.findCitizen = async (key) => {
+  
+}
 
 exports.deleteCitizenById = async (citizen_id) => {
   const citizen = await Citizen.findById(citizen_id);

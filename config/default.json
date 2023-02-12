@@ -5,7 +5,7 @@
     "accountant": "ACCOUNTANT"
   },
   "default": {
-    "access_token_exp": 3600,
+    "access_token_exp": 36000,
     "password": "123456789"
   },
   "account_status": {

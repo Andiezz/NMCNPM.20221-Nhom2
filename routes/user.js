@@ -19,12 +19,14 @@ router.post(
 router.get(
   '/details/:userId',
   isAuth.authToken,
+  validator.user_id,
   tryCatch(userController.getUser)
 );
 
 router.patch(
   '/update_profile/:userId',
   isAuth.authToken,
+  validator.user_id,
   validator.userUpdate,
   tryCatch(userController.updateUser)
 );
@@ -32,6 +34,7 @@ router.patch(
 router.patch(
   '/updatePassword/:userId',
   isAuth.authToken,
+  validator.user_id,
   validator.updatePassword,
   tryCatch(userController.updatePassword)
 );
@@ -47,6 +50,7 @@ router.delete(
   '/delete/:userId',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
+  validator.user_id,
   tryCatch(userController.deleteAccount)
 );
 

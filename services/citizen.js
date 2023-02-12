@@ -9,6 +9,7 @@ const householdService = require('../services/household');
 const {
   DatabaseConnectionError,
   RequestValidationError,
+  DataNotFoundError,
 } = require('../utils/error');
 
 exports.getCitizenById = async ({ card_id, passport_id }) => {
@@ -41,12 +42,12 @@ exports.createCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
-  let isExist = await CardIdentity.exists({ card_id: value });
+  let isExist = await CardIdentity.exists({ card_id: card_id });
   if (isExist) {
     throw new RequestValidationError('Card Identity has already existed.');
   }
 
-  isExist = await Citizen.exists({ passport_id: value });
+  isExist = await Citizen.exists({ passport_id: passport_id });
   if (isExist) {
     throw new RequestValidationError('Passport id has already existed.');
   }
@@ -74,7 +75,7 @@ exports.createCitizen = async ({
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
     modifiedBy: modifiedBy,
-    index: card_id + firstName + lastName,
+    index: card_id + ' ' + firstName + lastName,
   });
 
   const newCitizen = await citizen.save();
@@ -87,8 +88,8 @@ exports.createCitizen = async ({
 };
 
 exports.updateCitizen = async ({
-  citizen_id,
   card_id,
+  citizen_id,
   location,
   date,
   expiration,
@@ -112,7 +113,7 @@ exports.updateCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
-  const card_identity = await CardIdentity.findOne({ card_id: value });
+  const card_identity = await CardIdentity.findOne({ card_id: card_id });
 
   if (card_identity && card_identity.citizen_id.toString() !== citizen_id) {
     throw new RequestValidationError(
@@ -173,8 +174,34 @@ exports.citizenList = async () => {
 };
 
 exports.findCitizen = async (key) => {
-  
-}
+  const list = await Citizen.find();
+  const result = [];
+  list.forEach((citizen) => {
+    if (citizen.index?.includes(key)) {
+      result.push(citizen);
+    }
+  });
+
+  if (result.length === 0) {
+    throw new DataNotFoundError('Citizen not found.');
+  }
+  return result;
+};
+
+exports.statistic = async () => {
+  const total = await Citizen.countDocuments();
+  const maleTotal = await Citizen.countDocuments({
+    $or: [{ gender: 'Nam' }, { gender: 'MALE' }],
+  });
+  const femaleTotal = await Citizen.countDocuments({ 
+    $or: [{ gender: 'Nữ' }, { gender: 'FEMALE' }],
+  });
+  const otherTotal = await Citizen.countDocuments({ 
+    $or: [{ gender: 'Khác' }, { gender: 'OTHER' }],
+  });
+
+  return { total, maleTotal, femaleTotal, otherTotal }
+};
 
 exports.deleteCitizenById = async (citizen_id) => {
   const citizen = await Citizen.findById(citizen_id);

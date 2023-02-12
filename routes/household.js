@@ -20,6 +20,7 @@ router.get(
   '/profile/:household_id',
   authToken,
   authRole(['LEADER']),
+  validator.household_id,
   validator.householdInfo,
   tryCatch(householdController.getHousehold)
 )

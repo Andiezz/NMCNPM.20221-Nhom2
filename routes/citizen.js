@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   '/create',
   authToken,
-  authRole(['ADMIN', 'LEADER']),
+  authRole(['LEADER']),
   validator.citizenInfo,
   tryCatch(citizenController.createCitizen)
 );
@@ -19,7 +19,7 @@ router.post(
 router.get(
   '/profile/:citizen_id',
   authToken,
-  authRole(['ADMIN', 'LEADER']),
+  authRole(['LEADER']),
   validator.citizen_id,
   tryCatch(citizenController.getCitizen)
 );
@@ -27,7 +27,8 @@ router.get(
 router.patch(
   '/update_profile/:citizen_id',
   authToken,
-  authRole(['ADMIN', 'LEADER']),
+  authRole(['LEADER']),
+  validator.citizen_id,
   validator.citizenInfo,
   tryCatch(citizenController.updateCitizen)
 );
@@ -35,14 +36,28 @@ router.patch(
 router.get(
   '/list',
   authToken,
-  authRole(['ADMIN', 'LEADER']),
+  authRole(['LEADER']),
   tryCatch(citizenController.citizenList)
+);
+
+router.get(
+  '/find',
+  authToken,
+  authRole(['LEADER']),
+  tryCatch(citizenController.findCitizen)
+);
+
+router.get(
+  '/statistic',
+  authToken,
+  authRole(['LEADER']),
+  tryCatch(citizenController.statistic)
 );
 
 router.delete(
   '/delete/:citizen_id',
   authToken,
-  authRole(['ADMIN', 'LEADER']),
+  authRole(['LEADER']),
   validator.citizen_id,
   tryCatch(citizenController.deleteCitizen)
 );

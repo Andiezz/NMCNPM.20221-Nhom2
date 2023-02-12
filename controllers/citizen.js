@@ -32,6 +32,7 @@ exports.createCitizen = async (req, res, next) => {
   } = req.body;
 
   const newCitizen = await citizenService.createCitizen({
+    card_id: card_id,
     passport_id: passport_id,
     firstName: firstName,
     lastName: lastName,
@@ -115,6 +116,7 @@ exports.updateCitizen = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
 
   const { savedCardId, savedCitizen } = await citizenService.updateCitizen({
+    card_id: card_id,
     citizen_id: citizen_id,
     card_id: card_id,
     location: location,
@@ -157,6 +159,27 @@ exports.citizenList = async (req, res, next) => {
     response_status: 1,
     message: 'Fetched all citizens',
     data: { list: list },
+  });
+};
+
+exports.findCitizen = async (req, res, next) => {
+  const { key } = req.body;
+  const result = await citizenService.findCitizen(key);
+
+  res.status(200).json({
+    response_status: 1,
+    message: `${result.length} citizen(s) found.`,
+    data: { result: result },
+  });
+};
+
+exports.statistic = async (req, res, next) => {
+  const { total, maleTotal, femaleTotal, otherTotal } = await citizenService.statistic();
+
+  res.status(200).json({
+    response_status: 1,
+    message: 'Statistic found',
+    data: { total: total, maleTotal: maleTotal, femaleTotal: femaleTotal, otherTotal: otherTotal },
   });
 };
 

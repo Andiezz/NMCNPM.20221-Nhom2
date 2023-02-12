@@ -64,6 +64,16 @@ exports.userInfo = [
     .withMessage('Password must not contain special character'),
 ];
 
+exports.userUpdate = [
+  body('role').exists({ checkFalsy: true }).withMessage('Role is required'),
+  body('phone')
+    .exists()
+    .withMessage('Phone is required')
+    .trim()
+    .isMobilePhone(['vi-VN'])
+    .withMessage('Invalid phone number'),
+];
+
 exports.user_id = [
   param('user_id')
     .custom(async (value, { req }) => {
@@ -210,7 +220,7 @@ exports.householdInfo = [
     .trim()
     .isLength({ min: 5, max: 5 })
     .withMessage('Invalid area code'),
-]
+];
 
 exports.household_id = [
   param('household_id')
@@ -235,7 +245,7 @@ exports.member = [
       return true;
     })
     .withMessage('Citizen not found'),
-]
+];
 
 exports.fee = [
   body('name')

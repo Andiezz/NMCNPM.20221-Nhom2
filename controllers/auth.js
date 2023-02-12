@@ -40,7 +40,7 @@ exports.login = async (req, res, next) => {
     message: 'Login successfully!',
     data: {
       refresh_token,
-      access_token,
+      access_token
     },
   });
 };

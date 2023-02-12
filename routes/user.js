@@ -25,7 +25,7 @@ router.get(
 router.patch(
   '/update_profile/:userId',
   isAuth.authToken,
-  validator.userInfo,
+  validator.userUpdate,
   tryCatch(userController.updateUser)
 );
 

@@ -14,11 +14,6 @@ const userHistorySchema = new Schema(
 			required: true,
 			default: 1,
 		},
-		citizen_id: {
-			type: Schema.Types.ObjectId,
-			ref: 'Citizen',
-			required: true,
-		},
 		phone: {
 			type: String,
 			required: true,

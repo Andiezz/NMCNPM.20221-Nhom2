@@ -47,16 +47,15 @@ exports.getAllUsers = async () => {
   return list;
 };
 
-exports.createNewUser = async ({ role, phone, password, citizen_id }) => {
+exports.createNewUser = async ({ role, phone, password  }) => {
   const hashedPassword = await security.hashPassword(password);
 
-  const isExist = await User.exists({ phone: value });
+  const isExist = await User.exists({ phone: phone });
   if (isExist) {
     throw new RequestValidationError('This phone has already been used.');
   }
 
   const user = new User({
-    citizen_id: citizen_id,
     role: role,
     phone: phone,
     password: hashedPassword,

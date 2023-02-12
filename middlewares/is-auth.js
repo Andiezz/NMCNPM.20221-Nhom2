@@ -5,12 +5,12 @@ const { NotAuthenticatedError, NotAuthorizedError } = require('../utils/error');
 const User = require('../models/user');
 
 exports.authToken = (req, res, next) => {
-  if (!req.session.access_token) {
+  if (!req.get('Authorization')) {
     throw new NotAuthenticatedError('Not Authenticated');
   }
-
-  jwt.verify(
-    req.session.access_token,
+  const token = req.get('Authorization').split(' ')[1];
+  let decoded_token = jwt.verify(
+    token,
     process.env.ACCESS_TOKEN_SECRET,
     (err, user) => {
       if (err) {

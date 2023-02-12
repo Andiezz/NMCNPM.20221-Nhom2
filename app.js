@@ -33,12 +33,12 @@ const corsOptions = {
 app.use(express.static(path.join(__dirname, 'images')));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
-app.use(
-  cookieSession({
-    signed: false,
-    secure: false,
-  })
-);
+// app.use(
+//   cookieSession({
+//     signed: false,
+//     secure: false,
+//   })
+// );
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);

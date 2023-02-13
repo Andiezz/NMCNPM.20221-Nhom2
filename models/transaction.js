@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Transaction_History = require('./transactionHistory');
+// const Transaction_History = require('./transactionHistory');
 
 const Schema = mongoose.Schema;
 

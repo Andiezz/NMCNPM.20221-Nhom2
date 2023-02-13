@@ -31,22 +31,22 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
 
-// userSchema.pre('save', async function (next) {
-//   const history = new UserHistory();
-//   if (this.version != null) {
-//     history.role = this.role;
-//     history.status = this.status;
-//     history.phone = this.phone;
-//     history.version = this.version + 1;
-//     await history.save();
-//   } else {
-//     history.role = this.role;
-//     history.status = this.status;
-//     history.phone = this.phone;
-//     history.version = 0;
-//   }
-//   await history.save();
-//   next();
-// });
+userSchema.pre('save', async function (next) {
+  const history = new UserHistory();
+  if (this.version != null) {
+    history.role = this.role;
+    history.status = this.status;
+    history.phone = this.phone;
+    history.version = this.version + 1;
+    await history.save();
+  } else {
+    history.role = this.role;
+    history.status = this.status;
+    history.phone = this.phone;
+    history.version = 0;
+  }
+  await history.save();
+  next();
+});
 
 module.exports = mongoose.model('User', userSchema);

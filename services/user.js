@@ -68,6 +68,8 @@ exports.createNewUser = async ({ role, phone, password  }) => {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
 
+  await smsService.sendSMS({ phone: phone, message: 'User created successfully' });
+
   return newUser;
 };
 

@@ -142,6 +142,15 @@ exports.householdHistory = async (req, res, next) => {
   });
 };
 
+exports.householdStatistic = async (req, res, next) => {
+  const total = await householdService.householdStatistic();
+  res.status(200).json({
+    response_status: 1,
+    message: 'Statistic found',
+    data: { total: total },
+  });
+}
+
 exports.deleteHousehold = async (req, res, next) => {
   const household_id = req.params.household_id;
   const result = await householdService.deleteHouseholdById(household_id);

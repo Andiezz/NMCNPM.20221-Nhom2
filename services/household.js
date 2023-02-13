@@ -143,6 +143,11 @@ exports.householdHistory = async (household_id) => {
   return history;
 }
 
+exports.householdStatistic = async () => {
+  const total = await Household.countDocuments();
+  return total;
+}
+
 exports.deleteHouseholdById = async (household_id) => {
   const household = await Household.findById(household_id);
   const citizens = household.members;

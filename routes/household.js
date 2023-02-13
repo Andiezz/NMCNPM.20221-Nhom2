@@ -56,6 +56,13 @@ router.get(
 );
 
 router.get(
+  '/statistic',
+  authToken,
+  authRole(['LEADER']),
+  tryCatch(householdController.householdStatistic)
+);
+
+router.get(
   '/history/:household_id',
   authToken,
   authRole(['LEADER']),

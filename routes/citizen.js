@@ -19,7 +19,7 @@ router.post(
 router.get(
   '/profile/:citizen_id',
   authToken,
-  authRole(['LEADER']),
+  authRole(['LEADER', 'ACCOUNTANT']),
   validator.citizen_id,
   tryCatch(citizenController.getCitizen)
 );
@@ -36,21 +36,21 @@ router.patch(
 router.get(
   '/list',
   authToken,
-  authRole(['LEADER']),
+  authRole(['LEADER', 'ACCOUNTANT']),
   tryCatch(citizenController.citizenList)
 );
 
 router.get(
   '/find',
   authToken,
-  authRole(['LEADER']),
+  authRole(['LEADER', 'ACCOUNTANT']),
   tryCatch(citizenController.findCitizen)
 );
 
 router.get(
   '/statistic',
   authToken,
-  authRole(['LEADER']),
+  authRole(['LEADER', 'ACCOUNTANT']),
   tryCatch(citizenController.statistic)
 );
 

@@ -18,6 +18,8 @@ exports.createUser = async (req, res, next) => {
     password: password,
   });
 
+  await smsService.sendSMS({ phone: phone, message: 'User created successfully' });
+
   res.status(200).json({
     responseStatus: 1,
     message: 'User created!',

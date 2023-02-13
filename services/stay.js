@@ -50,6 +50,7 @@ exports.updateStay = async ({
 
 exports.getAllStay = async () => {
   const list = await Stay.find();
+  console.log(list)
   return list;
 }
 

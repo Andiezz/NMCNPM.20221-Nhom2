@@ -17,7 +17,7 @@ router.post(
 )
 
 router.get(
-  '/:deathId',
+  '/detail/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(deathController.getDeath)
@@ -38,7 +38,7 @@ router.get(
 )
 
 router.delete(
-  'delete/:deathId',
+  '/delete/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(deathController.deleteDeath)

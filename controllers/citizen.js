@@ -174,12 +174,29 @@ exports.findCitizen = async (req, res, next) => {
 };
 
 exports.statistic = async (req, res, next) => {
-  const { total, maleTotal, femaleTotal, otherTotal } = await citizenService.statistic();
+  const { total, maleTotal, femaleTotal, otherTotal } =
+    await citizenService.statistic();
 
   res.status(200).json({
     response_status: 1,
     message: 'Statistic found',
-    data: { total: total, maleTotal: maleTotal, femaleTotal: femaleTotal, otherTotal: otherTotal },
+    data: {
+      total: total,
+      maleTotal: maleTotal,
+      femaleTotal: femaleTotal,
+      otherTotal: otherTotal,
+    },
+  });
+};
+
+exports.citizenHistory = async (req, res, next) => {
+  const citizen_id = req.params.citizen_id;
+  const history = await citizenService.citizenHistory(citizen_id);
+
+  res.status(200).json({
+    response_status: 1,
+    message: 'History fetched.',
+    data: { history: history },
   });
 };
 

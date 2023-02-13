@@ -130,6 +130,18 @@ exports.householdList = async (req, res, next) => {
   });
 };
 
+exports.householdHistory = async (req, res, next) => {
+  const household_id = req.params.household_id;
+  const history = await householdService.householdHistory(household_id);
+  console.log(history.length);
+
+  res.status(200).json({
+    response_status: 1,
+    message: 'History fetched.',
+    data: { history: history },
+  });
+};
+
 exports.deleteHousehold = async (req, res, next) => {
   const household_id = req.params.household_id;
   const result = await householdService.deleteHouseholdById(household_id);

@@ -94,7 +94,8 @@ householdSchema.pre('save', async function (next) {
     history.move_out.date = this.move_out.date;
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
-    history.version = this.version;
+    history.original_id = this._id;
+    history.version = this.version + 1;
   } else {
     history.household_id = this.household_id;
     history.owner_id = this.owner_id;
@@ -109,7 +110,8 @@ householdSchema.pre('save', async function (next) {
     history.move_out.date = this.move_out.date;
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
-    history.version = this.version;
+    history.original_id = this._id;
+    history.version = 0;
   }
   await history.save();
   next();

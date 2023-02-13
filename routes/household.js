@@ -21,7 +21,6 @@ router.get(
   authToken,
   authRole(['LEADER']),
   validator.household_id,
-  validator.householdInfo,
   tryCatch(householdController.getHousehold)
 )
 
@@ -55,6 +54,13 @@ router.get(
   authRole(['LEADER']),
   tryCatch(householdController.householdList)
 )
+
+router.get(
+  '/history/:household_id',
+  authToken,
+  authRole(['LEADER']),
+  tryCatch(householdController.householdHistory)
+);
 
 router.delete(
   '/delete/:household_id',

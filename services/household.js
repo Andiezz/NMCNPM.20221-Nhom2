@@ -1,10 +1,8 @@
 const Household = require('../models/household');
 const Citizen = require('../models/citizen');
+const Household_History = require('../models/household');
 
-const citizenService = require('../services/citizen');
-
-const BadRequestError = require('../errors/bad-request-error');
-const DatabaseConnectionError = require('../errors/database-connection-error');
+const { BadRequestError, DatabaseConnectionError, DataNotFoundError } = require('../utils/error');
 
 exports.createHousehold = async ({
   household_id,
@@ -134,6 +132,16 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
 exports.houseHoldList = async () => {
   return await Household.find();
 };
+
+exports.householdHistory = async (household_id) => {
+  const history = await Household_History.find({ original_id: household_id });
+
+  if (history.length === 0) {
+    throw new DataNotFoundError('This household has never updated.')
+  }
+
+  return history;
+}
 
 exports.deleteHouseholdById = async (household_id) => {
   const household = await Household.findById(household_id);

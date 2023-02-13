@@ -74,8 +74,6 @@ exports.updatePassword = async (req, res, next) => {
     newPassword: newPassword,
   });
 
-  // await smsService.sendSMS({ phone: phone, message: message });
-
   res.status(200).json({
     responseStatus: 1,
     message: 'Password updated successfully!',

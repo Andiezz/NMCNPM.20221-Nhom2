@@ -47,7 +47,7 @@ exports.updateDeath = async (req, res, next) => {
     reason
   } = req.body;
 
-  const deathId = req.params._id;
+  const deathId = req.params.deathId;
 
   const updatedDeath = await deathService.updateDeath({
     death_id: deathId,

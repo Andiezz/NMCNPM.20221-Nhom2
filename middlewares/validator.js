@@ -5,6 +5,7 @@ const Fee = require('../models/fee');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Transaction = require('../models/transaction');
+const Household = require('../models/household')
 
 exports.login = [
   body('phone')
@@ -75,10 +76,10 @@ exports.userUpdate = [
 ];
 
 exports.user_id = [
-  param('user_id')
+  param('userId')
     .custom(async (value, { req }) => {
       const isExist = await User.findById(value);
-      if (!isExist) {
+      if (isExist === null) {
         return Promise.reject();
       }
       return true;
@@ -189,7 +190,7 @@ exports.citizenInfo = [
 ];
 
 exports.citizen_id = [
-  param('user_id')
+  param('citizen_id')
     .custom(async (value, { req }) => {
       const isExist = await Citizen.findById(value);
       if (!isExist) {
@@ -226,7 +227,7 @@ exports.household_id = [
   param('household_id')
     .custom(async (value, { req }) => {
       const isExist = await Household.findById(value);
-      if (!isExist) {
+      if (isExist === null) {
         return Promise.reject();
       }
       return true;

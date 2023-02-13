@@ -87,7 +87,7 @@ exports.resetPassword = async (req, res, next) => {
   const { token, newPassword } = req.body;
   await authService.resetPassword(token, newPassword);
 
-  // await smsService.sendSMS({ phone: phone, message: message });
+  await smsService.sendSMS({ phone: phone, message: 'New password updated!' });
 
   res.status(200).json({
     response_status: 1,

@@ -91,6 +91,15 @@ const citizenHistorySchema = new Schema(
       required: false,
       ref: 'User',
     },
+    version: {
+			type: Number,
+			required: true,
+		},
+    citizen_id: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+      ref: 'Citizen'
+    }
   },
   { timestamps: true, versionKey: false }
 );

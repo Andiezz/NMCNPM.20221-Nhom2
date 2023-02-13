@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Household = require('../models/household');
+const Citizen_History = require('../models/citizenHistory')
 
 const cardIdentityService = require('../services/cartIdentity');
 const householdService = require('../services/household');
@@ -123,7 +124,7 @@ exports.updateCitizen = async ({
 
   const check_citizen = await Citizen.findOne({ passport_id: passport_id });
 
-  if (check_citizen && check_citizen.citizen_id.toString() !== citizen_id) {
+  if (check_citizen && check_citizen._id.toString() !== citizen_id) {
     throw new RequestValidationError(
       'Card identity exists already, please pick a different one!'
     );
@@ -202,6 +203,16 @@ exports.statistic = async () => {
 
   return { total, maleTotal, femaleTotal, otherTotal }
 };
+
+exports.citizenHistory = async (citizen_id) => {
+  const history = await Citizen_History.find({ citizen_id: citizen_id });
+
+  if (history.length === 0) {
+    throw new DataNotFoundError('This citizen has never updated.')
+  }
+
+  return history;
+}
 
 exports.deleteCitizenById = async (citizen_id) => {
   const citizen = await Citizen.findById(citizen_id);

@@ -71,6 +71,11 @@ const householdHistorySchema = new Schema(
       ref: "User",
       required: true
     },
+    original_id: {
+      type: mongoose.Types.ObjectId,
+      ref: "Household",
+      required: false
+    },
     version: {
 			type: Number,
 			required: true,

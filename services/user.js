@@ -4,6 +4,8 @@ const User = require('../models/user');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 
+const smsService = require('../services/sms');
+
 const security = require('../utils/security');
 const {
   DatabaseConnectionError,
@@ -106,7 +108,7 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
   }
   const isEqual = await bcrypt.compare(oldPassword, check_user.password);
   if (!isEqual) {
-    const err = new Error('Old password is incorrect.');
+    const err = new BadRequestError('Old password is incorrect.');
     err.statusCode = 401;
     throw err;
   }
@@ -117,6 +119,8 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
   if (check_user !== updatedUser) {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
+
+  await smsService.sendSMS({ phone: check_user.phone, message: "Password updated successfully." });
 
   return updatedUser;
 };

@@ -54,6 +54,14 @@ router.get(
   tryCatch(citizenController.statistic)
 );
 
+router.get(
+  '/history/:citizen_id',
+  authToken,
+  authRole(['LEADER']),
+  validator.citizen_id,
+  tryCatch(citizenController.citizenHistory)
+);
+
 router.delete(
   '/delete/:citizen_id',
   authToken,

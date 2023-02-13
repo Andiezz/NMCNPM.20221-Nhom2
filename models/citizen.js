@@ -121,6 +121,8 @@ citizenSchema.pre('save', async function (next) {
     history.moveIn = this.moveIn;
     history.moveOut = this.moveOut;
     history.modifiedBy = this.modifiedBy;
+    history.citizen_id = this._id;
+    history.version = this.version + 1;
   } else {
     history.household_id = this.household_id;
     history.passport_id = this.passport_id;
@@ -139,6 +141,8 @@ citizenSchema.pre('save', async function (next) {
     history.moveIn = this.moveIn;
     history.moveOut = this.moveOut;
     history.modifiedBy = this.modifiedBy;
+    history.citizen_id = this._id;
+    history.version = 0;
   }
   await history.save();
   next();

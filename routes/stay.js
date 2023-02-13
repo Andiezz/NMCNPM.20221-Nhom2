@@ -17,7 +17,7 @@ router.post(
 )
 
 router.get(
-  '/:stayId',
+  '/detail/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(stayController.getStay)
@@ -38,7 +38,7 @@ router.get(
 )
 
 router.delete(
-  'delete/:stayId',
+  '/delete/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(stayController.deleteStay)

@@ -12,7 +12,7 @@ router.get(
   '/list/:household_id',
   authToken,
   authRole(['ACCOUNTANT']),
-  validator.household_id,
+  // validator.household_id,
   tryCatch(transactionController.transactionList)
 );
 

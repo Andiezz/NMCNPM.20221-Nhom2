@@ -76,7 +76,7 @@ exports.createCitizen = async ({
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
     modifiedBy: modifiedBy,
-    index: card_id + ' ' + firstName + lastName,
+    index: card_id + ' ' + firstName + ' ' + lastName,
   });
 
   const newCitizen = await citizen.save();
@@ -194,14 +194,14 @@ exports.statistic = async () => {
   const maleTotal = await Citizen.countDocuments({
     $or: [{ gender: 'Nam' }, { gender: 'MALE' }],
   });
-  const femaleTotal = await Citizen.countDocuments({ 
+  const femaleTotal = await Citizen.countDocuments({
     $or: [{ gender: 'Nữ' }, { gender: 'FEMALE' }],
   });
-  const otherTotal = await Citizen.countDocuments({ 
+  const otherTotal = await Citizen.countDocuments({
     $or: [{ gender: 'Khác' }, { gender: 'OTHER' }],
   });
 
-  return { total, maleTotal, femaleTotal, otherTotal }
+  return { total, maleTotal, femaleTotal, otherTotal };
 };
 
 exports.citizenHistory = async (citizen_id) => {

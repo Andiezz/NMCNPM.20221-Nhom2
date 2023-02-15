@@ -131,6 +131,26 @@ exports.newYearTransaction = async () => {
   return;
 };
 
+exports.addTransactionForNewHousehold = async (household_id) => {
+  const fee_list = await Fee.find({ required: { $ne: 0 } });
+  const check_household = Household.findById(household_id);
+
+  for (i = 0; i < fee_list.length; i++) {
+    let total = fee_list[i].required * 12;
+    if (fee_list[i].memberPayment) {
+      total = check_household.members.length * 12 * fee_list[i].required;
+    }
+    const new_year = new Date().getFullYear();
+    await Transaction.create({
+      fee_id: fee_list[i]._id,
+      household_id: household_id,
+      cost: total,
+      year: new_year,
+    });
+  }
+  return;
+};
+
 exports.statisticDonation = async (year) => {
   return await Transaction.aggregate([
     {

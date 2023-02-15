@@ -1,5 +1,7 @@
 const Absence = require('../models/absence');
 
+const { BadRequestError, DatabaseConnectionError } = require('../utils/error')
+
 exports.createAbsence = async ({
   citizen_id,
   code,
@@ -8,6 +10,21 @@ exports.createAbsence = async ({
   reason,
   modifiedBy,
 }) => {
+  const checkAbsence = await Absence.findOne({
+    code: code,
+  });
+  if (checkAbsence) {
+    throw new BadRequestError('Absence has already existed.');
+  }
+
+  const dateNow = new Date()
+  const dateTo = new Date(date.to)
+
+  const checkCitizen = await Absence.findOne({ citizen_id: citizen_id });
+  if (checkCitizen && dateTo.getTime() > dateNow.getTime()) {
+    throw new BadRequestError('This citizen has still been away.')
+  }
+  
   const absence = new Absence({
     citizen_id: citizen_id,
     code: code,
@@ -38,6 +55,11 @@ exports.updateAbsence = async ({
   modifiedBy
 }) => {
   const absence = await Absence.findById(absence_id)
+  const isExist = await Absence.findOne({ code: code })
+
+  if (absence.code !== code && isExist) {
+    throw new BadRequestError('This absence code has already been used.')
+  }
 
   absence.code = code
   absence.place = place

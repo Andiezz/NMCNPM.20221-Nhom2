@@ -7,7 +7,7 @@ exports.createStay = async (req, res, next) => {
     citizen_id: citizen_id,
     code: code,
     place: place,
-    date,
+    date: date,
     reason: reason,
     modifiedBy: req.user._id,
   });

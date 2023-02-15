@@ -21,6 +21,14 @@ exports.createHousehold = async ({
     throw new BadRequestError('Household has already existed.');
   }
 
+  const memberIds = members.map(member => {
+    return member.citizen_id
+  })
+
+  if (!memberIds.includes(owner_id)) {
+    throw new BadRequestError('Owner has to be a member.')
+  }
+
   const household = new Household({
     household_id: household_id,
     owner_id: owner_id,
@@ -53,6 +61,15 @@ exports.updateHousehold = async ({
   modifiedBy,
 }) => {
   const updatedHousehold = await Household.findById(_id);
+  const isExist = await Household.findOne({ household_id: household_id })
+
+  if (updatedHousehold.household_id !== household_id && isExist) {
+    throw new BadRequestError('This household_id has already been used.')
+  }
+
+  if (!members.includes(owner_id)) {
+    throw new BadRequestError('Owner has to be a member.')
+  }
 
   updatedHousehold.household_id = household_id;
   updatedHousehold.owner_id = owner_id;
@@ -64,7 +81,6 @@ exports.updateHousehold = async ({
   updatedHousehold.modifiedBy = modifiedBy;
 
   const savedHousehold = await updatedHousehold.save();
-
   return savedHousehold;
 };
 

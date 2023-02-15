@@ -31,8 +31,15 @@ exports.createCitizen = async (req, res, next) => {
     moveOutReason,
   } = req.body;
 
-  const newCitizen = await citizenService.createCitizen({
+  const newCardIdentity = await cardIdentityService.createCardIdentity({
     card_id: card_id,
+    location: location,
+    date: date,
+    expiration: expiration,
+  });
+
+  const newCitizen = await citizenService.createCitizen({
+    card_id: newCardIdentity,
     passport_id: passport_id,
     firstName: firstName,
     lastName: lastName,
@@ -54,14 +61,6 @@ exports.createCitizen = async (req, res, next) => {
     modifiedBy: req.user._id,
   });
 
-  const newCardIdentity = await cardIdentityService.createCardIdentity({
-    card_id: card_id,
-    citizen_id: newCitizen._id,
-    location: location,
-    date: date,
-    expiration: expiration,
-  });
-
   res.status(200).json({
     responseStatus: 1,
     message: 'New citizen created!',
@@ -74,7 +73,7 @@ exports.createCitizen = async (req, res, next) => {
 
 exports.getCitizen = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
-  const check_citizen = await Citizen.findById(citizen_id);
+  const check_citizen = await Citizen.findById(citizen_id).populate('card_id');
   if (!check_citizen) {
     throw new DataNotFoundError('Citizen not found');
   }
@@ -116,7 +115,6 @@ exports.updateCitizen = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
 
   const { savedCardId, savedCitizen } = await citizenService.updateCitizen({
-    card_id: card_id,
     citizen_id: citizen_id,
     card_id: card_id,
     location: location,
@@ -191,12 +189,15 @@ exports.statistic = async (req, res, next) => {
 
 exports.citizenHistory = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
-  const history = await citizenService.citizenHistory(citizen_id);
+  const { infoHistory, cardIdHistory } = await citizenService.citizenHistory(citizen_id);
 
   res.status(200).json({
     response_status: 1,
     message: 'History fetched.',
-    data: { history: history },
+    data: { 
+      infoHistory: infoHistory,
+      cardIdHistory: cardIdHistory
+    },
   });
 };
 

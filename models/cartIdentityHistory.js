@@ -8,10 +8,6 @@ const cardIdentityHistorySchema = new Schema(
       type: String,
       required: true,
     },
-    citizen_id: {
-      type: mongoose.Types.ObjectId,
-      ref: 'Citizen',
-    },
     location: {
       type: String,
       required: true,
@@ -24,6 +20,15 @@ const cardIdentityHistorySchema = new Schema(
       type: Date,
       required: true,
     },
+    originalCard: {
+      type: mongoose.Types.ObjectId,
+      required: false,
+      ref: 'Card_Identity'
+    },
+    version: {
+			type: Number,
+			required: true,
+		},
   },
   { timestamps: true, versionKey: false }
 );

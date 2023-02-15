@@ -3,6 +3,12 @@ const client = require('twilio')(
   process.env.TWILIO_AUTH_TOKEN
 );
 
+exports.verifyPhone = async () => {
+  return client.validationRequests
+    .create({friendlyName: 'phone', phoneNumber: '+84944162921'})
+    .then(validation_request => console.log(validation_request.friendlyName));
+}
+
 exports.sendSMS = async ({ phone, message }) => {
   client.messages
     .create({

@@ -9,6 +9,10 @@ const citizenSchema = new Schema(
     household_id: {
       type: String,
     },
+    card_id: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Card_Identity',
+    },
     passport_id: {
       type: String,
       required: false,
@@ -104,6 +108,7 @@ const citizenSchema = new Schema(
 citizenSchema.pre('save', async function (next) {
   const history = new Citizen_History();
   if (this.version != null) {
+    history.card_id = this.card_id;
     history.household_id = this.household_id;
     history.passport_id = this.passport_id;
     history.name = this.name;
@@ -121,9 +126,10 @@ citizenSchema.pre('save', async function (next) {
     history.moveIn = this.moveIn;
     history.moveOut = this.moveOut;
     history.modifiedBy = this.modifiedBy;
-    history.citizen_id = this._id;
+    history.citizen_id = this.citizen_id;
     history.version = this.version + 1;
   } else {
+    history.card_id = this.card_id;
     history.household_id = this.household_id;
     history.passport_id = this.passport_id;
     history.name = this.name;

@@ -1,16 +1,19 @@
 const CardIdentity = require('../models/cardIdentity');
 
-const { DatabaseConnectionError } = require('../utils/error');
+const { DatabaseConnectionError, BadRequestError } = require('../utils/error');
 
 exports.createCardIdentity = async ({
-  citizen_id,
   card_id,
   location,
   date,
   expiration,
 }) => {
+  let isExist = await CardIdentity.exists({ card_id: card_id });
+  if (isExist) {
+    throw new BadRequestError('Card Identity has already existed.');
+  }
+
   const cardIdentity = new CardIdentity({
-    citizen_id: citizen_id,
     card_id: card_id,
     location: location,
     date: date,
@@ -29,28 +32,23 @@ exports.createCardIdentity = async ({
 };
 
 exports.updateCardIdentity = async ({
+  _id,
   card_id,
   location,
   date,
   expiration,
-  citizen_id,
 }) => {
-  let updatedCardId = await CardIdentity.findOne({
-    card_id: card_id,
-  });
+  const updatedCardId = await CardIdentity.findById(_id);
+  const isExist = await CardIdentity.findOne({ card_id: card_id })
 
-  if (updatedCardId) {
-    updatedCardId.card_id = card_id;
-    updatedCardId.location = location;
-    updatedCardId.date = date;
-    updatedCardId.expiration = expiration;
-  } else {
-    updatedCardId = await CardIdentity.findOne({ citizen_id: citizen_id })
-    updatedCardId.card_id = card_id;
-    updatedCardId.location = location;
-    updatedCardId.date = date;
-    updatedCardId.expiration = expiration;
+  if (updatedCardId.card_id !== card_id && isExist) {
+    throw new BadRequestError('This card id has already been used.')
   }
+
+  updatedCardId.card_id = card_id;
+  updatedCardId.location = location;
+  updatedCardId.date = date;
+  updatedCardId.expiration = expiration;
 
   const savedCardId = await updatedCardId.save();
 

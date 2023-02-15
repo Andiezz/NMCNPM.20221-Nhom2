@@ -1,5 +1,7 @@
 const Death = require('../models/death');
 
+const { BadRequestError, DatabaseConnectionError } = require('../utils/error')
+
 exports.createDeath = async ({
   citizen_id,
   code,
@@ -7,6 +9,13 @@ exports.createDeath = async ({
   reason,
   modifiedBy,
 }) => {
+  const checkDeath = await Death.findOne({
+    code: code,
+  });
+  if (checkDeath) {
+    throw new BadRequestError('Death has already existed.');
+  }
+
   const death = new Death({
     citizen_id: citizen_id,
     code: code,
@@ -35,6 +44,11 @@ exports.updateDeath = async ({
   modifiedBy
 }) => {
   const death = await Death.findById(death_id)
+  const isExist = await Death.findOne({ code: code })
+
+  if (death.code !== code && isExist) {
+    throw new BadRequestError('This death code has already been used.')
+  }
 
   death.code = code
   death.date = date

@@ -2,7 +2,8 @@ const User = require('../models/user');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Household = require('../models/household');
-const Citizen_History = require('../models/citizenHistory')
+const Citizen_History = require('../models/citizenHistory');
+const Card_Identity_History = require('../models/cartIdentityHistory');
 
 const cardIdentityService = require('../services/cartIdentity');
 const householdService = require('../services/household');
@@ -12,6 +13,7 @@ const {
   RequestValidationError,
   DataNotFoundError,
 } = require('../utils/error');
+const cardIdentity = require('../models/cardIdentity');
 
 exports.getCitizenById = async ({ card_id, passport_id }) => {
   const citizen = await Citizen.findOne({
@@ -43,18 +45,13 @@ exports.createCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
-  let isExist = await CardIdentity.exists({ card_id: card_id });
-  if (isExist) {
-    throw new RequestValidationError('Card Identity has already existed.');
-  }
-
-  isExist = await Citizen.exists({ passport_id: passport_id });
+  const isExist = await Citizen.exists({ passport_id: passport_id });
   if (isExist) {
     throw new RequestValidationError('Passport id has already existed.');
   }
 
   const citizen = new Citizen({
-    card_id: card_id,
+    card_id: card_id._id,
     passport_id: passport_id,
     name: {
       firstName: firstName,
@@ -76,7 +73,7 @@ exports.createCitizen = async ({
     moveOutDate: moveOutDate,
     moveOutReason: moveOutReason,
     modifiedBy: modifiedBy,
-    index: card_id + ' ' + firstName + ' ' + lastName,
+    index: card_id.card_id + ' ' + firstName + ' ' + lastName,
   });
 
   const newCitizen = await citizen.save();
@@ -89,8 +86,8 @@ exports.createCitizen = async ({
 };
 
 exports.updateCitizen = async ({
-  card_id,
   citizen_id,
+  card_id,
   location,
   date,
   expiration,
@@ -114,9 +111,12 @@ exports.updateCitizen = async ({
   moveOutReason,
   modifiedBy,
 }) => {
-  const card_identity = await CardIdentity.findOne({ card_id: card_id });
+  const updatedCitizen = await Citizen.findById(citizen_id);
 
-  if (card_identity && card_identity.citizen_id.toString() !== citizen_id) {
+  const updatedCardId = await CardIdentity.findById(updatedCitizen.card_id);
+  const isExist = await CardIdentity.exists({ card_id: card_id });
+
+  if (updatedCardId.card_id !== card_id && isExist) {
     throw new RequestValidationError(
       'Card identity exists already, please pick a different one!'
     );
@@ -124,13 +124,11 @@ exports.updateCitizen = async ({
 
   const check_citizen = await Citizen.findOne({ passport_id: passport_id });
 
-  if (check_citizen && check_citizen._id.toString() !== citizen_id) {
+  if (updatedCitizen.passport_id !== passport_id && check_citizen !== null) {
     throw new RequestValidationError(
-      'Card identity exists already, please pick a different one!'
+      'Passport exists already, please pick a different one!'
     );
   }
-
-  const updatedCitizen = await Citizen.findById(citizen_id);
 
   updatedCitizen.passport_id = passport_id;
   updatedCitizen.name.firstName = firstName;
@@ -160,22 +158,22 @@ exports.updateCitizen = async ({
   }
 
   const savedCardId = await cardIdentityService.updateCardIdentity({
+    _id: updatedCitizen.card_id,
     card_id: card_id,
     location: location,
     date: date,
     expiration: expiration,
-    citizen_id: citizen_id,
   });
 
   return { savedCardId: savedCardId, savedCitizen: savedCitizen };
 };
 
 exports.citizenList = async () => {
-  return await Citizen.find();
+  return await Citizen.find().populate('card_id');
 };
 
 exports.findCitizen = async (key) => {
-  const list = await Citizen.find();
+  const list = await Citizen.find().populate('card_id');
   const result = [];
   list.forEach((citizen) => {
     if (citizen.index?.includes(key)) {
@@ -205,14 +203,18 @@ exports.statistic = async () => {
 };
 
 exports.citizenHistory = async (citizen_id) => {
-  const history = await Citizen_History.find({ citizen_id: citizen_id });
+  const citizen = await Citizen.findById(citizen_id);
+  const infoHistory = await Citizen_History.find({ citizen_id: citizen_id });
+  const cardIdHistory = await Card_Identity_History.findOne({
+    originalCard: citizen.card_id,
+  });
 
-  if (history.length === 0) {
-    throw new DataNotFoundError('This citizen has never updated.')
+  if (infoHistory.length === null && cardIdHistory === null) {
+    throw new DataNotFoundError('This citizen has never updated.');
   }
 
-  return history;
-}
+  return { infoHistory, cardIdHistory };
+};
 
 exports.deleteCitizenById = async (citizen_id) => {
   const citizen = await Citizen.findById(citizen_id);

@@ -7,6 +7,10 @@ const citizenHistorySchema = new Schema(
     household_id: {
       type: String,
     },
+    card_id: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Card_Identity',
+    },
     passport_id: {
       type: String,
       required: false,

@@ -2,7 +2,11 @@ const Household = require('../models/household');
 const Citizen = require('../models/citizen');
 const Household_History = require('../models/household');
 
-const { BadRequestError, DatabaseConnectionError, DataNotFoundError } = require('../utils/error');
+const {
+  BadRequestError,
+  DatabaseConnectionError,
+  DataNotFoundError,
+} = require('../utils/error');
 
 exports.createHousehold = async ({
   household_id,
@@ -21,12 +25,12 @@ exports.createHousehold = async ({
     throw new BadRequestError('Household has already existed.');
   }
 
-  const memberIds = members.map(member => {
-    return member.citizen_id
-  })
+  const memberIds = members.map((member) => {
+    return member.citizen_id;
+  });
 
   if (!memberIds.includes(owner_id)) {
-    throw new BadRequestError('Owner has to be a member.')
+    throw new BadRequestError('Owner has to be a member.');
   }
 
   const household = new Household({
@@ -61,14 +65,14 @@ exports.updateHousehold = async ({
   modifiedBy,
 }) => {
   const updatedHousehold = await Household.findById(_id);
-  const isExist = await Household.findOne({ household_id: household_id })
+  const isExist = await Household.findOne({ household_id: household_id });
 
   if (updatedHousehold.household_id !== household_id && isExist) {
-    throw new BadRequestError('This household_id has already been used.')
+    throw new BadRequestError('This household_id has already been used.');
   }
 
   if (!members.includes(owner_id)) {
-    throw new BadRequestError('Owner has to be a member.')
+    throw new BadRequestError('Owner has to be a member.');
   }
 
   updatedHousehold.household_id = household_id;
@@ -121,11 +125,13 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
   const household = await Household.findById(household_id);
 
   if (citizen.household_id == null) {
-    throw new BadRequestError("This citizen has not belonged to any household yet.");
+    throw new BadRequestError(
+      'This citizen has not belonged to any household yet.'
+    );
   }
 
   if (household.owner_id.toString() === citizen_id.toString()) {
-    throw new BadRequestError("Can not remove the owner.")
+    throw new BadRequestError('Can not remove the owner.');
   }
 
   for (let i = 0; i < household.members.length; i++) {
@@ -146,23 +152,27 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
 };
 
 exports.houseHoldList = async () => {
-  return await Household.find();
+  return await Household.find().populate('owner_id');
 };
 
 exports.householdHistory = async (household_id) => {
-  const history = await Household_History.find({ original_id: household_id });
+  const history = await Household_History.find({
+    original_id: household_id,
+  })
+    .populate('owner_id')
+    .populate('members.citizen_id');
 
   if (history.length === 0) {
-    throw new DataNotFoundError('This household has never updated.')
+    throw new DataNotFoundError('This household has never updated.');
   }
 
   return history;
-}
+};
 
 exports.householdStatistic = async () => {
   const total = await Household.countDocuments();
   return total;
-}
+};
 
 exports.deleteHouseholdById = async (household_id) => {
   const household = await Household.findById(household_id);

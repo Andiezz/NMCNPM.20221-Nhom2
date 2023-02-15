@@ -38,7 +38,9 @@ exports.createHousehold = async (req, res, next) => {
 
 exports.getHousehold = async (req, res, next) => {
   const household_id = req.params.household_id;
-  const check_household = await Household.findById(household_id);
+  const check_household = await Household.findById(household_id)
+    .populate('owner_id')
+    .populate('members.citizen_id');
   if (!check_household) {
     throw new DataNotFoundError('Household not found');
   }

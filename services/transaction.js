@@ -133,7 +133,7 @@ exports.newYearTransaction = async () => {
 
 exports.addTransactionForNewHousehold = async (household_id) => {
   const fee_list = await Fee.find({ required: { $ne: 0 } });
-  const check_household = Household.findById(household_id);
+  const check_household = await Household.findById(household_id);
 
   for (i = 0; i < fee_list.length; i++) {
     let total = fee_list[i].required * 12;

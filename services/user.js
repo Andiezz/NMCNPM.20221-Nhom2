@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
-const Citizen = require('../models/citizen');
-const CardIdentity = require('../models/cardIdentity');
 
 // const smsService = require('../services/sms');
 
@@ -10,7 +8,6 @@ const security = require('../utils/security');
 const {
   DatabaseConnectionError,
   DataNotFoundError,
-  RequestValidationError,
   BadRequestError,
 } = require('../utils/error');
 
@@ -54,7 +51,7 @@ exports.createNewUser = async ({ role, phone, password  }) => {
 
   const isExist = await User.exists({ phone: phone });
   if (isExist) {
-    throw new RequestValidationError('This phone has already been used.');
+    throw new BadRequestError('This phone has already been used.');
   }
 
   const user = new User({
@@ -69,7 +66,6 @@ exports.createNewUser = async ({ role, phone, password  }) => {
   }
 
   // await smsService.verifyPhone();
-
   // await smsService.sendSMS({ phone: phone, message: 'User created successfully' });
 
   return newUser;
@@ -80,18 +76,6 @@ exports.updateUser = async ({ userId, phone, role }) => {
 
   if (check_user.role === 'ADMIN') {
     throw new BadRequestError('User is an admin.');
-  }
-
-  if (!check_user) {
-    throw new DataNotFoundError('User not found.');
-  }
-
-  const check_phone = await User.findOne({
-    phone: phone,
-  });
-
-  if (check_phone && phone != check_phone.phone) {
-    throw new RequestValidationError('This phone has already been used.');
   }
 
   check_user.phone = phone;

@@ -65,17 +65,18 @@ exports.userInfo = [
     .withMessage('Password must not contain special character'),
 ];
 
-exports.phoneRole = [
+exports.updatePhone = [
   body('phone')
     .custom(async (value, { req }) => {
-      const isExist = await User.findOne({ phone: value, role: req.body.role });
-      if (isExist) {
+      const user = await User.findById(req.params.userId)
+      const isExist = await User.exists({ phone: value })
+      if (user.phone !== value && isExist) {
         return Promise.reject();
       }
-      return true;
+      return true
     })
     .withMessage('This user has already been existed.'),
-];
+]
 
 exports.userUpdate = [
   body('role').exists({ checkFalsy: true }).withMessage('Role is required'),

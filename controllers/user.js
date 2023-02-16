@@ -1,11 +1,5 @@
 require('dotenv').config();
 
-const {
-  ThirdPartyError,
-  DataNotFoundError,
-  BadRequestError,
-} = require('../utils/error');
-
 const userService = require('../services/user');
 const smsService = require('../services/sms');
 
@@ -30,9 +24,6 @@ exports.createUser = async (req, res, next) => {
 exports.getUser = async (req, res, next) => {
   const userId = req.params.userId;
   const check_user = await userService.getUserById({ userId });
-  if (!check_user) {
-    throw new DataNotFoundError('User not found');
-  }
   res.status(200).json({
     responseStatus: 1,
     message: 'User fetched!',

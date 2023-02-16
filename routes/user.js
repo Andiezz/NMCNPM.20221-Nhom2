@@ -12,7 +12,6 @@ router.post(
   '/create_user',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
-  validator.phoneRole,
   validator.userInfo,
   tryCatch(userController.createUser)
 );
@@ -29,6 +28,7 @@ router.patch(
   isAuth.authToken,
   validator.user_id,
   validator.userUpdate,
+  validator.updatePhone,
   tryCatch(userController.updateUser)
 );
 

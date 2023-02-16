@@ -4,7 +4,7 @@ const User = require('../models/user');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 
-const smsService = require('../services/sms');
+// const smsService = require('../services/sms');
 
 const security = require('../utils/security');
 const {
@@ -68,7 +68,7 @@ exports.createNewUser = async ({ role, phone, password  }) => {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
 
-  await smsService.verifyPhone();
+  // await smsService.verifyPhone();
 
   // await smsService.sendSMS({ phone: phone, message: 'User created successfully' });
 
@@ -124,7 +124,7 @@ exports.updateUserPassword = async ({ userId, oldPassword, newPassword }) => {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
 
-  await smsService.sendSMS({ phone: check_user.phone, message: "Password updated successfully." });
+  // await smsService.sendSMS({ phone: check_user.phone, message: "Password updated successfully." });
 
   return updatedUser;
 };

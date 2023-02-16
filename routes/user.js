@@ -12,6 +12,7 @@ router.post(
   '/create_user',
   isAuth.authToken,
   isAuth.authRole(['ADMIN']),
+  validator.phoneRole,
   validator.userInfo,
   tryCatch(userController.createUser)
 );

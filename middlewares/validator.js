@@ -5,7 +5,7 @@ const Fee = require('../models/fee');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Transaction = require('../models/transaction');
-const Household = require('../models/household')
+const Household = require('../models/household');
 
 exports.login = [
   body('phone')
@@ -63,6 +63,18 @@ exports.userInfo = [
     .isLength({ min: 8 })
     .isAlphanumeric()
     .withMessage('Password must not contain special character'),
+];
+
+exports.phoneRole = [
+  body('phone')
+    .custom(async (value, { req }) => {
+      const isExist = await User.findOne({ phone: value, role: req.body.role });
+      if (isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('This user has already been existed.'),
 ];
 
 exports.userUpdate = [

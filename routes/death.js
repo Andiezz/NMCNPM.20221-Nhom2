@@ -20,6 +20,7 @@ router.get(
   '/detail/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(deathController.getDeath)
 )
 
@@ -27,6 +28,7 @@ router.patch(
   '/update/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(deathController.updateDeath)
 )
 
@@ -41,6 +43,7 @@ router.delete(
   '/delete/:deathId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(deathController.deleteDeath)
 )
 

@@ -20,6 +20,7 @@ router.get(
   '/detail/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.stay_id,
   tryCatch(stayController.getStay)
 )
 
@@ -27,6 +28,7 @@ router.patch(
   '/update/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.stay_id,
   tryCatch(stayController.updateStay)
 )
 
@@ -41,6 +43,7 @@ router.delete(
   '/delete/:stayId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.stay_id,
   tryCatch(stayController.deleteStay)
 )
 

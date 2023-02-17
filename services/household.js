@@ -71,9 +71,9 @@ exports.updateHousehold = async ({
     throw new BadRequestError('This household_id has already been used.');
   }
 
-  if (!members.includes(owner_id)) {
-    throw new BadRequestError('Owner has to be a member.');
-  }
+  // if (!members.includes(owner_id)) {
+  //   throw new BadRequestError('Owner has to be a member.');
+  // }
 
   updatedHousehold.household_id = household_id;
   updatedHousehold.owner_id = owner_id;

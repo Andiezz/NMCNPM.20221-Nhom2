@@ -3,8 +3,6 @@ const Citizen = require('../models/citizen');
 const citizenService = require('../services/citizen');
 const cardIdentityService = require('../services/cartIdentity');
 
-const { DataNotFoundError } = require('../utils/error');
-
 exports.createCitizen = async (req, res, next) => {
   const {
     card_id,
@@ -74,9 +72,6 @@ exports.createCitizen = async (req, res, next) => {
 exports.getCitizen = async (req, res, next) => {
   const citizen_id = req.params.citizen_id;
   const check_citizen = await Citizen.findById(citizen_id).populate('card_id');
-  if (!check_citizen) {
-    throw new DataNotFoundError('Citizen not found');
-  }
 
   res.status(200).json({
     responseStatus: 1,

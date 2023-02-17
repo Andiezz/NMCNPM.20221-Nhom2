@@ -10,10 +10,9 @@ const householdService = require('../services/household');
 
 const {
   DatabaseConnectionError,
-  RequestValidationError,
   DataNotFoundError,
+  BadRequestError,
 } = require('../utils/error');
-const cardIdentity = require('../models/cardIdentity');
 
 exports.getCitizenById = async ({ card_id, passport_id }) => {
   const citizen = await Citizen.findOne({
@@ -47,7 +46,7 @@ exports.createCitizen = async ({
 }) => {
   const isExist = await Citizen.exists({ passport_id: passport_id });
   if (isExist) {
-    throw new RequestValidationError('Passport id has already existed.');
+    throw new BadRequestError('Passport id has already existed.');
   }
 
   const citizen = new Citizen({
@@ -117,7 +116,7 @@ exports.updateCitizen = async ({
   const isExist = await CardIdentity.exists({ card_id: card_id });
 
   if (updatedCardId.card_id !== card_id && isExist) {
-    throw new RequestValidationError(
+    throw new BadRequestError(
       'Card identity exists already, please pick a different one!'
     );
   }
@@ -125,7 +124,7 @@ exports.updateCitizen = async ({
   const check_citizen = await Citizen.findOne({ passport_id: passport_id });
 
   if (updatedCitizen.passport_id !== passport_id && check_citizen !== null) {
-    throw new RequestValidationError(
+    throw new BadRequestError(
       'Passport exists already, please pick a different one!'
     );
   }

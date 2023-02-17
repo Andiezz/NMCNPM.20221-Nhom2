@@ -20,6 +20,7 @@ router.get(
   '/get/:absenceId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(absenceController.getAbsence)
 )
 
@@ -27,6 +28,7 @@ router.patch(
   '/update/:absenceId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(absenceController.updateAbsence)
 )
 
@@ -41,6 +43,7 @@ router.delete(
   '/delete/:absenceId',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
+  validator.death_id,
   tryCatch(absenceController.deleteAbsence)
 )
 

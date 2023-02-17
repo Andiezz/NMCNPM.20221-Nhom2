@@ -5,7 +5,10 @@ const Fee = require('../models/fee');
 const Citizen = require('../models/citizen');
 const CardIdentity = require('../models/cardIdentity');
 const Transaction = require('../models/transaction');
-const Household = require('../models/household')
+const Household = require('../models/household');
+const Stay = require('../models/stay');
+const Absence = require('../models/absence');
+const Death = require('../models/death');
 
 exports.login = [
   body('phone')
@@ -63,6 +66,19 @@ exports.userInfo = [
     .isLength({ min: 8 })
     .isAlphanumeric()
     .withMessage('Password must not contain special character'),
+];
+
+exports.updatePhone = [
+  body('phone')
+    .custom(async (value, { req }) => {
+      const user = await User.findById(req.params.userId);
+      const isExist = await User.exists({ phone: value });
+      if (user.phone !== value && isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('This user has already been existed.'),
 ];
 
 exports.userUpdate = [
@@ -227,7 +243,7 @@ exports.household_id = [
   param('household_id')
     .custom(async (value, { req }) => {
       const isExist = await Household.findById(value);
-      if (isExist === null) {
+      if (!isExist) {
         return Promise.reject();
       }
       return true;
@@ -246,6 +262,42 @@ exports.member = [
       return true;
     })
     .withMessage('Citizen not found'),
+];
+
+exports.stay_id = [
+  param('stay_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Stay.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Stay not found'),
+];
+
+exports.absence_id = [
+  param('absence_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Absence.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Absence not found'),
+];
+
+exports.death_id = [
+  param('death_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Death.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Death not found'),
 ];
 
 exports.fee = [

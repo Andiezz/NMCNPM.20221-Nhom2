@@ -29,7 +29,12 @@ exports.createHousehold = async ({
     return member.citizen_id;
   });
 
-  if (!memberIds.includes(owner_id.toString())) {
+  const memberIds2 = members.map((member) => {
+    return member.citizen_id._id;
+  });
+
+  if (!memberIds.includes(owner_id.toString()) || 
+              !memberIds2.includes(owner_id.toString())) {
     throw new BadRequestError('Owner has to be a member.');
   }
 
@@ -79,6 +84,8 @@ exports.updateHousehold = async ({
   const memberIds = members.map((member) => {
     return member.citizen_id;
   });
+
+  console.log(!memberIds.includes(owner_id.toString()))
 
   if (!memberIds.includes(owner_id.toString())) {
     throw new BadRequestError('Owner has to be a member.');

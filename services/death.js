@@ -39,7 +39,7 @@ exports.createDeath = async ({
 };
 
 exports.getDeathById = async (death_id) => {
-  return await Death.findById(death_id);
+  return await Death.findById(death_id).populate('citizen_id');
 };
 
 exports.updateDeath = async ({ death_id, code, date, reason, modifiedBy }) => {
@@ -59,7 +59,7 @@ exports.updateDeath = async ({ death_id, code, date, reason, modifiedBy }) => {
 };
 
 exports.getAllDeath = async () => {
-  const list = await Death.find();
+  const list = await Death.find().populate('citizen_id');
   return list;
 };
 

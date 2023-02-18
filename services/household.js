@@ -100,7 +100,6 @@ exports.addMember = async ({ household_id, citizen_id, relation }) => {
   }
 
   citizen.household_id = household_id;
-
   const updatedCitizen = await citizen.save();
 
   if (updatedCitizen != citizen) {
@@ -113,7 +112,6 @@ exports.addMember = async ({ household_id, citizen_id, relation }) => {
   });
 
   const updatedHousehold = await household.save();
-
   if (updatedHousehold !== household) {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
@@ -125,11 +123,11 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
   const citizen = await Citizen.findById(citizen_id);
   const household = await Household.findById(household_id);
 
-  if (citizen.household_id == null) {
-    throw new BadRequestError(
-      'This citizen has not belonged to any household yet.'
-    );
-  }
+  // if (citizen.household_id == null) {
+  //   throw new BadRequestError(
+  //     'This citizen has not belonged to any household yet.'
+  //   );
+  // }
 
   if (household.owner_id.toString() === citizen_id.toString()) {
     throw new BadRequestError('Can not remove the owner.');

@@ -168,11 +168,13 @@ exports.updateCitizen = async ({
 };
 
 exports.citizenList = async () => {
-  return await Citizen.find().populate('card_id');
+  return await Citizen.find({ status: true })
+    .populate('card_id')
+    .sort({ 'name.firstName': 1 });
 };
 
 exports.findCitizen = async (key) => {
-  const list = await Citizen.find().populate('card_id');
+  const list = await Citizen.find({ status: true }).populate('card_id');
   const result = [];
   list.forEach((citizen) => {
     if (citizen.index?.includes(key)) {

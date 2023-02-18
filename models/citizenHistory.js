@@ -96,18 +96,22 @@ const citizenHistorySchema = new Schema(
       ref: 'User',
     },
     version: {
-			type: Number,
-			required: true,
-		},
+      type: Number,
+      required: true,
+    },
     citizen_id: {
       type: mongoose.Types.ObjectId,
       required: false,
-      ref: 'Citizen'
+      ref: 'Citizen',
     },
     index: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );

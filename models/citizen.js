@@ -99,8 +99,12 @@ const citizenSchema = new Schema(
     },
     index: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
@@ -127,7 +131,8 @@ citizenSchema.pre('save', async function (next) {
     history.moveOut = this.moveOut;
     history.modifiedBy = this.modifiedBy;
     history.citizen_id = this.citizen_id;
-    history.index = this.index
+    history.index = this.index;
+    history.status = this.status;
     history.version = this.version + 1;
   } else {
     history.card_id = this.card_id;
@@ -149,7 +154,8 @@ citizenSchema.pre('save', async function (next) {
     history.moveOut = this.moveOut;
     history.modifiedBy = this.modifiedBy;
     history.citizen_id = this._id;
-    history.index = this.index
+    history.index = this.index;
+    history.status = this.status;
     history.version = 0;
   }
   await history.save();

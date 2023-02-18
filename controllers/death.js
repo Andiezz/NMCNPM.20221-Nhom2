@@ -1,12 +1,7 @@
-const deathService = require("../services/death")
+const deathService = require('../services/death');
 
 exports.createDeath = async (req, res, next) => {
-  const {
-    citizen_id,
-    code,
-    date,
-    reason
-  } = req.body;
+  const { citizen_id, code, date, reason } = req.body;
 
   const death = await deathService.createDeath({
     citizen_id: citizen_id,
@@ -23,7 +18,7 @@ exports.createDeath = async (req, res, next) => {
       death: death,
     },
   });
-}
+};
 
 exports.getDeath = async (req, res, next) => {
   const deathId = req.params.deathId;
@@ -41,11 +36,7 @@ exports.getDeath = async (req, res, next) => {
 };
 
 exports.updateDeath = async (req, res, next) => {
-  const {
-    code,
-    date,
-    reason
-  } = req.body;
+  const { code, date, reason } = req.body;
 
   const deathId = req.params.deathId;
 
@@ -54,17 +45,17 @@ exports.updateDeath = async (req, res, next) => {
     code: code,
     date: date,
     reason: reason,
-    modifiedBy: req.user._id
-  })
+    modifiedBy: req.user._id,
+  });
 
   res.status(200).json({
     responseStatus: 1,
     message: 'Death updated!',
     data: {
-      updatedDeath: updatedDeath
-    }
-  })
-}
+      updatedDeath: updatedDeath,
+    },
+  });
+};
 
 exports.deathList = async (req, res, next) => {
   const list = await deathService.getAllDeath();
@@ -75,7 +66,7 @@ exports.deathList = async (req, res, next) => {
       list: list,
     },
   });
-}
+};
 
 exports.deleteDeath = async (req, res, next) => {
   const deathId = req.params.deathId;
@@ -85,4 +76,4 @@ exports.deleteDeath = async (req, res, next) => {
     responseStatus: 1,
     message: 'Death deleted!',
   });
-}
+};

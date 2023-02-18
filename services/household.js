@@ -28,11 +28,11 @@ exports.createHousehold = async ({
   const memberIds = members.map((member) => {
     return member.citizen_id;
   });
-
   if (!memberIds.includes(owner_id.toString())) {
     throw new BadRequestError('Owner has to be a member.');
   }
 
+  const owner = await Citizen.findById(owner_id);
   const household = new Household({
     household_id: household_id,
     owner_id: owner_id,
@@ -41,6 +41,18 @@ exports.createHousehold = async ({
     members: members,
     move_in: move_in,
     move_out: move_out,
+    index:
+      household_id +
+      ' ' +
+      address.province +
+      ' ' +
+      address.district +
+      ' ' +
+      address.ward +
+      ' ' +
+      owner.name.firstName +
+      ' ' +
+      owner.name.lastName,
     modifiedBy: modifiedBy,
   });
 
@@ -76,6 +88,8 @@ exports.updateHousehold = async ({
     throw new BadRequestError('This citizen is not existed.');
   }
 
+  const owner = await Citizen.findById(owner_id);
+
   updatedHousehold.household_id = household_id;
   updatedHousehold.owner_id = owner_id;
   updatedHousehold.areaCode = areaCode;
@@ -83,6 +97,18 @@ exports.updateHousehold = async ({
   updatedHousehold.members = members;
   updatedHousehold.move_in = move_in;
   updatedHousehold.move_out = move_out;
+  updatedHousehold.index =
+    household_id +
+    ' ' +
+    address.province +
+    ' ' +
+    address.district +
+    ' ' +
+    address.ward +
+    ' ' +
+    owner.name.firstName +
+    ' ' +
+    owner.name.lastName;
   updatedHousehold.modifiedBy = modifiedBy;
 
   const savedHousehold = await updatedHousehold.save();
@@ -151,7 +177,24 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
 };
 
 exports.houseHoldList = async () => {
-  return await Household.find().populate('owner_id').populate('members.citizen_id');
+  return await Household.find()
+    .populate('owner_id')
+    .populate('members.citizen_id');
+};
+
+exports.findHousehold = async (key) => {
+  const list = await Household.find();
+  const result = [];
+  list.forEach((household) => {
+    if (household.index?.includes(key)) {
+      result.push(household);
+    }
+  });
+
+  if (result.length === 0) {
+    throw new DataNotFoundError('Household not found.');
+  }
+  return result;
 };
 
 exports.householdHistory = async (household_id) => {

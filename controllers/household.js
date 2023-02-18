@@ -139,6 +139,17 @@ exports.householdList = async (req, res, next) => {
   });
 };
 
+exports.findHousehold = async (req, res, next) => {
+  const key = req.query.key;
+  const result = await householdService.findHousehold(key);
+
+  res.status(200).json({
+    response_status: 1,
+    message: `${result.length} household(s) found.`,
+    data: { result: result },
+  });
+};
+
 exports.householdHistory = async (req, res, next) => {
   const household_id = req.params.household_id;
   const history = await householdService.householdHistory(household_id);

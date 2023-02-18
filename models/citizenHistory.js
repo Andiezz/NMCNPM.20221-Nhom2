@@ -103,6 +103,10 @@ const citizenHistorySchema = new Schema(
       type: mongoose.Types.ObjectId,
       required: false,
       ref: 'Citizen'
+    },
+    index: {
+      type: String,
+      required: false
     }
   },
   { timestamps: true, versionKey: false }

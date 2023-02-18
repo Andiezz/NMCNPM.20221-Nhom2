@@ -80,6 +80,10 @@ const householdHistorySchema = new Schema(
 			type: Number,
 			required: true,
 		},
+    index: {
+      type: String,
+      required: false
+    }
   },
   { timestamps: true, versionKey: false }
 );

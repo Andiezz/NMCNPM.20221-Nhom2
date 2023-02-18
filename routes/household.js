@@ -56,6 +56,13 @@ router.get(
 );
 
 router.get(
+  '/find',
+  authToken,
+  authRole(['LEADER', 'ACCOUNTANT']),
+  tryCatch(householdController.findHousehold)
+);
+
+router.get(
   '/statistic',
   authToken,
   authRole(['LEADER']),

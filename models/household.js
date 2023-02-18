@@ -74,6 +74,10 @@ const householdSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    index: {
+      type: String,
+      required: false
+    }
   },
   { timestamps: true, versionKey: 'version', optimisticConcurrency: true }
 );
@@ -95,6 +99,7 @@ householdSchema.pre('save', async function (next) {
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
     history.original_id = this._id;
+    history.index = this.index
     history.version = this.version + 1;
   } else {
     history.household_id = this.household_id;
@@ -111,6 +116,7 @@ householdSchema.pre('save', async function (next) {
     history.move_out.reason = this.move_out.reason;
     history.modifiedBy = this.modifiedBy;
     history.original_id = this._id;
+    history.index = this.index
     history.version = 0;
   }
   await history.save();

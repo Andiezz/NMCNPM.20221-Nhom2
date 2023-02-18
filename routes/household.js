@@ -40,7 +40,7 @@ router.patch(
   tryCatch(householdController.addMember)
 );
 
-router.patch(
+router.put(
   '/remove_member/:household_id',
   authToken,
   authRole(['LEADER']),

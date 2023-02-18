@@ -6,6 +6,7 @@ const staySchema = new Schema({
   citizen_id: {
     type: mongoose.Types.ObjectId,
     required: true,
+    ref: 'Citizen'
   },
   code: {
     type: String,

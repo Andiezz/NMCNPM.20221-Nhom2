@@ -33,7 +33,7 @@ exports.createDeath = async ({
 };
 
 exports.getDeathById = async (death_id) => {
-  return await Death.findById(death_id).populate('citizen_id');
+  return await Death.findById(death_id);
 };
 
 exports.updateDeath = async ({

@@ -265,7 +265,7 @@ exports.member = [
 ];
 
 exports.stay_id = [
-  param('stay_id')
+  param('stayId')
     .custom(async (value, { req }) => {
       const isExist = await Stay.findById(value);
       if (!isExist) {
@@ -277,7 +277,7 @@ exports.stay_id = [
 ];
 
 exports.absence_id = [
-  param('absence_id')
+  param('absenceId')
     .custom(async (value, { req }) => {
       const isExist = await Absence.findById(value);
       if (!isExist) {
@@ -289,7 +289,7 @@ exports.absence_id = [
 ];
 
 exports.death_id = [
-  param('death_id')
+  param('deathId')
     .custom(async (value, { req }) => {
       const isExist = await Death.findById(value);
       if (!isExist) {

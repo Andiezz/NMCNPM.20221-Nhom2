@@ -71,6 +71,11 @@ exports.updateHousehold = async ({
     throw new BadRequestError('This household_id has already been used.');
   }
 
+  const check_owner = await Citizen.findById(owner_id);
+  if (!check_owner) {
+    throw new BadRequestError('This citizen is not existed.');
+  }
+
   if (!members.includes(owner_id)) {
     throw new BadRequestError('Owner has to be a member.');
   }
@@ -152,7 +157,7 @@ exports.removeMember = async ({ household_id, citizen_id }) => {
 };
 
 exports.houseHoldList = async () => {
-  return await Household.find().populate('owner_id');
+  return await Household.find().populate('owner_id').populate('members.citizen_id');
 };
 
 exports.householdHistory = async (household_id) => {

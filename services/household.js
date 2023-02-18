@@ -76,19 +76,6 @@ exports.updateHousehold = async ({
     throw new BadRequestError('This citizen is not existed.');
   }
 
-  const memberIds = members.map((member) => {
-    return member.citizen_id;
-  });
-
-  const memberIds2 = members.map((member) => {
-    return member.citizen_id._id;
-  });
-
-  if (!memberIds.includes(owner_id.toString()) || 
-              !memberIds2.includes(owner_id.toString()) && memberIds2[0] !== undefined) {
-    throw new BadRequestError('Owner has to be a member.');
-  }
-
   updatedHousehold.household_id = household_id;
   updatedHousehold.owner_id = owner_id;
   updatedHousehold.areaCode = areaCode;

@@ -85,7 +85,7 @@ exports.updateHousehold = async ({
   });
 
   if (!memberIds.includes(owner_id.toString()) || 
-              !memberIds2.includes(owner_id.toString())) {
+              !memberIds2.includes(owner_id.toString()) && memberIds2[0] !== undefined) {
     throw new BadRequestError('Owner has to be a member.');
   }
 

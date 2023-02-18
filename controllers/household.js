@@ -108,8 +108,12 @@ exports.addMember = async (req, res, next) => {
 };
 
 exports.removeMember = async (req, res, next) => {
-  const { citizen_id } = req.body;
-  const household_id = req.params.household_id;
+  // const { citizen_id } = req.body;
+  // const household_id = req.params.household_id;
+  // const citizen_id = req.params.citizen_id;
+
+  const household_id = req.query.household_id;
+  const citizen_id = req.query.citizen_id;
 
   const updatedHousehold = await householdService.removeMember({
     household_id: household_id,

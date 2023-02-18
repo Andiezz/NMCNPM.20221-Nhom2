@@ -41,10 +41,10 @@ router.patch(
 );
 
 router.put(
-  '/remove_member/:household_id',
+  '/remove_member',
   authToken,
   authRole(['LEADER']),
-  validator.household_id,
+  // validator.household_id,
   tryCatch(householdController.removeMember)
 );
 

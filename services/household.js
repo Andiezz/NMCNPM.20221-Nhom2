@@ -29,7 +29,7 @@ exports.createHousehold = async ({
     return member.citizen_id;
   });
 
-  if (!memberIds.includes(owner_id)) {
+  if (!memberIds.includes(owner_id.toString())) {
     throw new BadRequestError('Owner has to be a member.');
   }
 

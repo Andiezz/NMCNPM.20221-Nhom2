@@ -183,7 +183,7 @@ exports.houseHoldList = async () => {
 };
 
 exports.findHousehold = async (key) => {
-  const list = await Household.find();
+  const list = await Household.find().populate('owner_id');
   const result = [];
   list.forEach((household) => {
     if (household.index?.includes(key)) {

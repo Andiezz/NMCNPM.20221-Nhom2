@@ -43,7 +43,7 @@ exports.createStay = async ({
 };
 
 exports.getStayById = async (stay_id) => {
-  return await Stay.findById(stay_id);
+  return await Stay.findById(stay_id).populate('citizen_id');
 };
 
 exports.updateStay = async ({
@@ -71,7 +71,7 @@ exports.updateStay = async ({
 };
 
 exports.getAllStay = async () => {
-  const list = await Stay.find();
+  const list = await Stay.find().populate('citizen_id');
   return list;
 }
 

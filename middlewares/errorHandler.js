@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const RequestValidationError = require('../errors/request-validation-error');
-const CustomError = require('../errors/custom-error');
+const { CustomError, RequestValidationError } = require('../utils/error');
 
 exports.tryCatch = (f) => async (req, res, next) => {
   try {

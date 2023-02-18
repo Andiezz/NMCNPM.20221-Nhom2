@@ -43,7 +43,7 @@ exports.createAbsence = async ({
 };
 
 exports.getAbsenceById = async (absence_id) => {
-  return await Absence.findById(absence_id);
+  return await Absence.findById(absence_id).populate('citizen_id');
 };
 
 exports.updateAbsence = async ({
@@ -71,7 +71,7 @@ exports.updateAbsence = async ({
 };
 
 exports.getAllAbsence = async () => {
-  const list = await Absence.find();
+  const list = await Absence.find().populate('citizen_id');
   return list;
 }
 

@@ -156,7 +156,7 @@ exports.citizenList = async (req, res, next) => {
 };
 
 exports.findCitizen = async (req, res, next) => {
-  const { key } = req.body;
+  const key = req.query.key;
   const result = await citizenService.findCitizen(key);
 
   res.status(200).json({

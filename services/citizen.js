@@ -148,7 +148,7 @@ exports.updateCitizen = async ({
   updatedCitizen.moveOut.date = moveOutDate;
   updatedCitizen.moveOut.reason = moveOutReason;
   updatedCitizen.modifiedBy = modifiedBy;
-  updatedCitizen.index = card_id + firstName + lastName;
+  updatedCitizen.index = card_id.card_id + ' ' + firstName + ' ' + lastName;
 
   const savedCitizen = await updatedCitizen.save();
 
@@ -175,7 +175,7 @@ exports.findCitizen = async (key) => {
   const list = await Citizen.find().populate('card_id');
   const result = [];
   list.forEach((citizen) => {
-    if (citizen.index?.includes(key)) {
+    if (citizen.index.includes(key)) {
       result.push(citizen);
     }
   });

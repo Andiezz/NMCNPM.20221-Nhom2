@@ -1,6 +1,10 @@
 const Stay = require('../models/stay');
-
-const { BadRequestError, DatabaseConnectionError } = require('../utils/error')
+const Citizen = require('../models/citizen');
+const {
+  BadRequestError,
+  DatabaseConnectionError,
+  DataNotFoundError,
+} = require('../utils/error');
 
 exports.createStay = async ({
   citizen_id,
@@ -10,6 +14,11 @@ exports.createStay = async ({
   reason,
   modifiedBy,
 }) => {
+  const isExist = await Citizen.exists({ citizen_id });
+  if (!isExist) {
+    throw new DataNotFoundError('Citizen not found');
+  }
+
   const checkStay = await Stay.findOne({
     code: code,
   });
@@ -17,12 +26,12 @@ exports.createStay = async ({
     throw new BadRequestError('Stay code has already existed.');
   }
 
-  const dateNow = new Date()
-  const dateTo = new Date(date.to)
+  const dateNow = new Date();
+  const dateTo = new Date(date.to);
 
   const checkCitizen = await Stay.findOne({ citizen_id: citizen_id });
   if (checkCitizen && dateTo.getTime() > dateNow.getTime()) {
-    throw new BadRequestError('This citizen has still been stayed.')
+    throw new BadRequestError('This citizen has still been stayed.');
   }
 
   const stay = new Stay({
@@ -52,20 +61,20 @@ exports.updateStay = async ({
   place,
   date,
   reason,
-  modifiedBy
+  modifiedBy,
 }) => {
-  const stay = await Stay.findById(stay_id)
-  const isExist = await Stay.findOne({ code: code })
+  const stay = await Stay.findById(stay_id);
+  const isExist = await Stay.findOne({ code: code });
 
   if (stay.code !== code && isExist) {
-    throw new BadRequestError('This stay code has already been used.')
+    throw new BadRequestError('This stay code has already been used.');
   }
 
-  stay.code = code
-  stay.place = place
-  stay.date = date
-  stay.reason = reason
-  stay.modifiedBy = modifiedBy
+  stay.code = code;
+  stay.place = place;
+  stay.date = date;
+  stay.reason = reason;
+  stay.modifiedBy = modifiedBy;
 
   return await stay.save();
 };
@@ -73,10 +82,8 @@ exports.updateStay = async ({
 exports.getAllStay = async () => {
   const list = await Stay.find().populate('citizen_id');
   return list;
-}
+};
 
-exports.deleteStay = async ({
-  stay_id
-}) => {
+exports.deleteStay = async ({ stay_id }) => {
   return await Stay.findByIdAndDelete(stay_id);
-}
+};

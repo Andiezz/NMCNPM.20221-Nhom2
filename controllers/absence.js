@@ -72,7 +72,7 @@ exports.absenceList = async (req, res, next) => {
 
 exports.deleteAbsence = async (req, res, next) => {
   const absenceId = req.params.absenceId;
-  await absenceService.deleteAbsence({ absenceId: absenceId });
+  await absenceService.deleteAbsence(absenceId);
 
   res.status(200).json({
     responseStatus: 1,

@@ -70,7 +70,7 @@ exports.deathList = async (req, res, next) => {
 
 exports.deleteDeath = async (req, res, next) => {
   const deathId = req.params.deathId;
-  await deathService.deleteDeath({ deathId: deathId });
+  await deathService.deleteDeath(deathId);
 
   res.status(200).json({
     responseStatus: 1,

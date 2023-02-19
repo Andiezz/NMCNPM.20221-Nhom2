@@ -75,8 +75,6 @@ exports.getAllStay = async () => {
   return list;
 }
 
-exports.deleteStay = async ({
-  stay_id
-}) => {
+exports.deleteStay = async (stay_id) => {
   return await Stay.findByIdAndDelete(stay_id);
 }

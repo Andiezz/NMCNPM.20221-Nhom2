@@ -338,6 +338,15 @@ exports.fee_id = [
 ];
 
 exports.donate = [
+  body('fee_id')
+    .custom(async (value, { req }) => {
+      const isExist = await Fee.findById(value);
+      if (!isExist) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage('Fee not found'),
   body('amount')
     .exists()
     .withMessage('Amount cant be null')

@@ -161,7 +161,7 @@ exports.statisticDonation = async (year) => {
     },
     {
       $group: {
-        _id: { stage: '$stage', fee_id: '$fee_id' },
+        _id: { fee_id: '$fee_id' },
         total: { $sum: '$status' },
       },
     },

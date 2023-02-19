@@ -105,8 +105,10 @@ exports.total = async (req, res) => {
     message: 'Fetched total fee & donation  successfully',
     data: {
       total_fee: total_fee[0].total,
-      total_donation: total_donation[0].total,
-      sum: total_fee[0].total + total_donation[0].total,
+      total_donation: total_donation.length != 0 ? total_donation[0].total : 0,
+      sum:
+        total_fee[0].total +
+        (total_donation.length != 0 ? total_donation[0].total : 0),
     },
   });
 };

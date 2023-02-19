@@ -72,7 +72,7 @@ exports.stayList = async (req, res, next) => {
 
 exports.deleteStay = async (req, res, next) => {
   const stayId = req.params.stayId;
-  await stayService.deleteStay({ stayId: stayId });
+  await stayService.deleteStay(stayId);
 
   res.status(200).json({
     responseStatus: 1,

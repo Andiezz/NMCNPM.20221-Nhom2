@@ -46,7 +46,7 @@ exports.createDeath = async ({
 };
 
 exports.getDeathById = async (death_id) => {
-  return await Death.findById(death_id);
+  return await Death.findById(death_id).populate('citizen_id');
 };
 
 exports.updateDeath = async ({ death_id, code, date, reason, modifiedBy }) => {
@@ -70,10 +70,11 @@ exports.getAllDeath = async () => {
   return list;
 };
 
-exports.deleteDeath = async ({ death_id }) => {
+exports.deleteDeath = async (death_id) => {
   const death = await Death.findById(death_id);
   const check_citizen = await Citizen.findById(death.citizen_id);
   check_citizen.status = true;
   await check_citizen.save();
+  await Death.findByIdAndDelete(death_id)
   return death;
 };

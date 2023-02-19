@@ -83,6 +83,6 @@ exports.getAllAbsence = async () => {
   return list;
 };
 
-exports.deleteAbsence = async ({ absence_id }) => {
+exports.deleteAbsence = async (absence_id) => {
   return await Absence.findByIdAndDelete(absence_id);
 };

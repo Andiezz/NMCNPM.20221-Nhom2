@@ -50,6 +50,26 @@ exports.feeInit = async () => {
         memberPayment: true,
       },
       {
+        name: 'Phí an ninh',
+        required: 12000,
+        memberPayment: true,
+      },
+      {
+        name: 'Phí quản lý tổ dân phố',
+        required: 8000,
+        memberPayment: true,
+      },
+      {
+        name: 'Phí bảo hành cơ sở vật chất',
+        required: 10000,
+        memberPayment: false,
+      },
+      {
+        name: 'Quỹ phòng chống covid',
+        required: 50000,
+        memberPayment: false,
+      },
+      {
         name: 'Ủng hộ ngày thương binh-liệt sỹ 27/07',
       },
       {
@@ -60,6 +80,15 @@ exports.feeInit = async () => {
       },
       {
         name: 'Trợ giúp đồng bào bị ảnh hưởng bão lụt',
+      },
+      {
+        name: 'Quỹ vì biển đảo Việt Nam',
+      },
+      {
+        name: 'Quỹ tổ dân phố',
+      },
+      {
+        name: 'Quỹ người cao tuổi',
       },
     ];
     const result = await Fee.insertMany(fee);

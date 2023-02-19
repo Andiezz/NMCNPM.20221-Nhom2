@@ -94,6 +94,8 @@ exports.statisticFee = async (req, res) => {
   for (i = 0; i < statistic.length; i++) {
     for (j = 0; j < statistic[i].unpaid_household.length; j++) {
       if (statistic[i].unpaid_household[j] == null) {
+        statistic[i].unpaid_household.splice(j, 1);
+        j--;
         continue;
       }
       const household = await householdService.findHouseholdById(

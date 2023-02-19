@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require('express');
 
 const isAuth = require('../middlewares/is-auth');
 const absenceController = require('../controllers/absence');
@@ -14,7 +14,7 @@ router.post(
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(absenceController.createAbsence)
-)
+);
 
 router.get(
   '/get/:absenceId',
@@ -22,7 +22,7 @@ router.get(
   isAuth.authRole(['LEADER']),
   validator.absence_id,
   tryCatch(absenceController.getAbsence)
-)
+);
 
 router.patch(
   '/update/:absenceId',
@@ -30,14 +30,14 @@ router.patch(
   isAuth.authRole(['LEADER']),
   validator.absence_id,
   tryCatch(absenceController.updateAbsence)
-)
+);
 
 router.get(
   '/list',
   isAuth.authToken,
   isAuth.authRole(['LEADER']),
   tryCatch(absenceController.absenceList)
-)
+);
 
 router.delete(
   '/delete/:absenceId',
@@ -45,6 +45,6 @@ router.delete(
   isAuth.authRole(['LEADER']),
   validator.absence_id,
   tryCatch(absenceController.deleteAbsence)
-)
+);
 
 module.exports = router;

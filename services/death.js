@@ -1,7 +1,11 @@
 const Death = require('../models/death');
 const Citizen = require('../models/citizen');
 
-const { BadRequestError, DatabaseConnectionError } = require('../utils/error');
+const {
+  BadRequestError,
+  DatabaseConnectionError,
+  DataNotFoundError,
+} = require('../utils/error');
 
 exports.createDeath = async ({
   citizen_id,
@@ -10,6 +14,11 @@ exports.createDeath = async ({
   reason,
   modifiedBy,
 }) => {
+  const check_citizen = await Citizen.findById(citizen_id);
+
+  if (!check_citizen) {
+    throw new DataNotFoundError('Citizen not found');
+  }
   const checkDeath = await Death.findOne({
     code: code,
   });
@@ -29,8 +38,6 @@ exports.createDeath = async ({
   if (newDeath !== death) {
     throw new DatabaseConnectionError('Failed to connect with database.');
   }
-
-  const check_citizen = await Citizen.findById(citizen_id);
 
   check_citizen.status = false;
   await check_citizen.save();

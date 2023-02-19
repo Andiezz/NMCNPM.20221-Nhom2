@@ -229,3 +229,15 @@ exports.deleteHouseholdById = async (household_id) => {
 
   return await Household.findByIdAndDelete(household_id);
 };
+
+exports.findHouseholdById = async (household_id) => {
+  const check_household = await Household.findById(household_id).populate(
+    'owner_id'
+  );
+
+  return {
+    _id: check_household._id,
+    household_id: check_household.household_id,
+    owner_name: check_household.owner_id.name,
+  };
+};

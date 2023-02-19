@@ -190,7 +190,7 @@ exports.statisticDonation = async (year) => {
       },
     },
     {
-      $sort: { stage: 1 },
+      $sort: { fee: 1, stage: 1 },
     },
   ]);
 };

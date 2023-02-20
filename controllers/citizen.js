@@ -167,7 +167,7 @@ exports.findCitizen = async (req, res, next) => {
 };
 
 exports.statistic = async (req, res, next) => {
-  const { total, maleTotal, femaleTotal, otherTotal } =
+  const { total, maleTotal, femaleTotal, otherTotal, deathTotal } =
     await citizenService.statistic();
 
   res.status(200).json({
@@ -178,6 +178,7 @@ exports.statistic = async (req, res, next) => {
       maleTotal: maleTotal,
       femaleTotal: femaleTotal,
       otherTotal: otherTotal,
+      deathTotal: deathTotal
     },
   });
 };

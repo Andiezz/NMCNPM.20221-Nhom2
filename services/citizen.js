@@ -191,16 +191,19 @@ exports.findCitizen = async (key) => {
 exports.statistic = async () => {
   const total = await Citizen.countDocuments();
   const maleTotal = await Citizen.countDocuments({
-    $or: [{ gender: 'Nam' }, { gender: 'MALE' }],
+    $or: [{ gender: 'Nam' }, { gender: 'MALE', status: true }],
   });
   const femaleTotal = await Citizen.countDocuments({
-    $or: [{ gender: 'Nữ' }, { gender: 'FEMALE' }],
+    $or: [{ gender: 'Nữ' }, { gender: 'FEMALE', status: true }],
   });
   const otherTotal = await Citizen.countDocuments({
-    $or: [{ gender: 'Khác' }, { gender: 'OTHER' }],
+    $or: [{ gender: 'Khác' }, { gender: 'OTHER', status: true }],
   });
+  const deathTotal = await Citizen.countDocuments({
+    status: false
+  })
 
-  return { total, maleTotal, femaleTotal, otherTotal };
+  return { total, maleTotal, femaleTotal, otherTotal, deathTotal };
 };
 
 exports.citizenHistory = async (citizen_id) => {

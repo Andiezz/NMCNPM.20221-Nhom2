@@ -80,7 +80,9 @@ exports.newYearTransaction = async (req, res) => {
 
 exports.statisticDonation = async (req, res) => {
   const { year } = req.query;
-  const total_donation = await transactionService.statisticDonation(year);
+  const total_donation = await transactionService.statisticDonation(
+    Number(year)
+  );
   res.status(200).json({
     response_status: 1,
     message: 'Fetched total donation successfully',
@@ -89,8 +91,9 @@ exports.statisticDonation = async (req, res) => {
 };
 
 exports.statisticFee = async (req, res) => {
-  const { year } = req.query;
-  const statistic = await transactionService.statisticFee(year);
+  const year = req.query.year;
+
+  const statistic = await transactionService.statisticFee(Number(year));
   for (i = 0; i < statistic.length; i++) {
     for (j = 0; j < statistic[i].unpaid_household.length; j++) {
       if (statistic[i].unpaid_household[j] == null) {
@@ -113,10 +116,12 @@ exports.statisticFee = async (req, res) => {
 
 exports.total = async (req, res) => {
   const { year } = req.query;
-  const { total_fee, total_donation } = await transactionService.total(year);
+  const { total_fee, total_donation } = await transactionService.total(
+    Number(year)
+  );
   res.status(200).json({
     response_status: 1,
-    message: 'Fetched total fee & donation  successfully',
+    message: 'Fetched total fee & donation successfully',
     data: {
       total_fee: total_fee[0].total,
       total_donation: total_donation.length != 0 ? total_donation[0].total : 0,

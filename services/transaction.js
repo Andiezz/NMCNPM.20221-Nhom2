@@ -231,14 +231,6 @@ exports.statisticFee = async (year) => {
       },
     },
     { $unwind: { path: '$fee' } },
-    // {
-    //   $lookup: {
-    //     from: 'households',
-    //     localField: 'unpaid_household',
-    //     foreignField: '_id',
-    //     as: 'unpaid_household',
-    //   },
-    // },
     {
       $sort: { total: -1 },
     },

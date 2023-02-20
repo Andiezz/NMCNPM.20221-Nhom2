@@ -79,7 +79,7 @@ exports.newYearTransaction = async (req, res) => {
 };
 
 exports.statisticDonation = async (req, res) => {
-  const { year } = req.body;
+  const { year } = req.query;
   const total_donation = await transactionService.statisticDonation(year);
   res.status(200).json({
     response_status: 1,
@@ -89,7 +89,7 @@ exports.statisticDonation = async (req, res) => {
 };
 
 exports.statisticFee = async (req, res) => {
-  const { year } = req.body;
+  const { year } = req.query;
   const statistic = await transactionService.statisticFee(year);
   for (i = 0; i < statistic.length; i++) {
     for (j = 0; j < statistic[i].unpaid_household.length; j++) {
@@ -112,7 +112,7 @@ exports.statisticFee = async (req, res) => {
 };
 
 exports.total = async (req, res) => {
-  const { year } = req.body;
+  const { year } = req.query;
   const { total_fee, total_donation } = await transactionService.total(year);
   res.status(200).json({
     response_status: 1,

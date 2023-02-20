@@ -384,7 +384,7 @@ exports.transaction_id = [
 ];
 
 exports.year = [
-  body('year')
+  query('year')
     .exists()
     .withMessage('Year cant be null')
     .isInt()
